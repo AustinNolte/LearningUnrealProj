@@ -43,9 +43,7 @@ void APortal::Interact(AActor* InteractingActor){
 	AFirstPersonCharacter* Player = Cast<AFirstPersonCharacter>(InteractingActor);
 	if (Player && WorldName != "") {
 
-		FLatentActionInfo LatentInfo;
-		UGameplayStatics::LoadStreamLevel(this, WorldName, true, false, LatentInfo);
-		UGameplayStatics::UnloadStreamLevel(this, GetWorld()->GetFName(), LatentInfo, false);	
+		UGameplayStatics::OpenLevel(GetWorld(), WorldName);
 	}
 }
 
@@ -58,6 +56,10 @@ void APortal::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 		UE_LOG(LogTemp, Warning, TEXT("Overlap Begun with: %s"), *Player->GetName());
 	
 		DisplayText->SetVisibility(true);
+
+		check(GEngine != nullptr);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, (TEXT("Overlap Begun with: %s"), *Player->GetName()));
 	}
 	
 
@@ -72,6 +74,11 @@ void APortal::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		UE_LOG(LogTemp, Warning, TEXT("Overlap Ended with: %s"), *Player->GetName());
 	
 		DisplayText->SetVisibility(false);
+
+		check(GEngine != nullptr);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, (TEXT("Overlap Ended with: %s"), *Player->GetName()));
+
 	}
 
 }
