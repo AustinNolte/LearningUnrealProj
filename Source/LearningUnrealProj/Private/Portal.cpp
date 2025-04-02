@@ -3,7 +3,7 @@
 APortal::APortal(){
 
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractableArea")); // name object
 	Sphere->SetSphereRadius(100.0f); // set size
@@ -53,17 +53,10 @@ void APortal::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 	AFirstPersonCharacter* Player = Cast<AFirstPersonCharacter>(OtherActor);
 
 	if (Player) {
-		UE_LOG(LogTemp, Warning, TEXT("Overlap Begun with: %s"), *Player->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("Overlap Begun with: %s"), *Player->GetName());
 	
 		DisplayText->SetVisibility(true);
-
-		check(GEngine != nullptr);
-
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, (TEXT("Overlap Begun with: %s"), *Player->GetName()));
-	}
-	
-
-	
+	}	
 }
 
 void APortal::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
@@ -71,15 +64,24 @@ void APortal::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 	AFirstPersonCharacter* Player = Cast<AFirstPersonCharacter>(OtherActor);
 
 	if (Player) {
-		UE_LOG(LogTemp, Warning, TEXT("Overlap Ended with: %s"), *Player->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("Overlap Ended with: %s"), *Player->GetName());
 	
 		DisplayText->SetVisibility(false);
-
-		check(GEngine != nullptr);
-
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, (TEXT("Overlap Ended with: %s"), *Player->GetName()));
-
 	}
-
 }
 
+void APortal::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+	
+	if (DisplayText->IsVisible()) {
+		
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (PlayerController) {
+			FVector Direction = PlayerController->GetPawn()->GetActorLocation() - DisplayText->GetComponentLocation();
+
+			FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+
+			DisplayText->SetWorldRotation(FMath::RInterpTo(DisplayText->GetComponentRotation(), NewRotation, DeltaTime, 10.0f));
+		}
+	}
+}

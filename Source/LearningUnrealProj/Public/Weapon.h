@@ -29,6 +29,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD Image", meta = (AllowPrivateAccess = "true"))
 	UTexture2D* hudTexture;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Attributes", meta = (AllowPrivateAccess = "true"))
+	FString WeaponName;
 
 	// Sets default values for this actor's properties
 	AWeapon();
@@ -50,4 +53,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Hud Manipulation")
 	FORCEINLINE class UTexture2D* GetWeaponTexture() const { return hudTexture; }
+
+	FORCEINLINE class FString GetWeaponName() const { return WeaponName; }
 };
