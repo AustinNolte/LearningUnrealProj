@@ -33,7 +33,7 @@ AWeaponPickup::AWeaponPickup() {
 	DisplayText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("No World"));
 	DisplayText->SetHorizontalAlignment(EHTA_Center);
 	DisplayText->SetVerticalAlignment(EVRTA_TextCenter);
-	DisplayText->SetWorldSize(50.0f);
+	DisplayText->SetWorldSize(10.0f);
 	DisplayText->SetTextRenderColor(FColor::Magenta);
 
 	DisplayText->SetupAttachment(Sphere);

@@ -30,7 +30,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* SkeletalMesh;
-	
+		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	UTextRenderComponent* DisplayText;
 	
 	// Sets default values for this actor's properties
