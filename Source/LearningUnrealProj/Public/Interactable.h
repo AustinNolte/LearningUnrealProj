@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Interactable.generated.h"
 
-UCLASS(config = Game)
+UCLASS(Blueprintable)
 class LEARNINGUNREALPROJ_API AInteractable : public AActor{
 
 	GENERATED_BODY()
@@ -23,5 +23,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Interact(AActor* InteractingActor);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void Interact(AActor* InteractingActor);
+
+	virtual void Interact_Implementation(AActor* InteractingActor);
 };

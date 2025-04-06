@@ -1,7 +1,4 @@
 #include "BasicEnemy.h"
-#include "Kismet/GameplayStatics.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ABasicEnemy::ABasicEnemy() {
@@ -48,6 +45,10 @@ void ABasicEnemy::Die() {
 
 	UE_LOG(LogTemp, Log, TEXT("Enemy Died!"));
 
+	AFPS_GameModeBase* GameMode = Cast<AFPS_GameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GameMode){
+		GameMode->IncreaseKillCount();
+	}
 	Destroy();
 }
-

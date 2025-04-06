@@ -15,5 +15,5 @@ void AInteractable::BeginPlay(){ Super::BeginPlay(); }
 // Called every frame
 void AInteractable::Tick(float DeltaTime){ Super::Tick(DeltaTime); }
 
-void AInteractable::Interact(AActor* InteractingActor){}
+void AInteractable::Interact_Implementation(AActor* InteractingActor){}
 

@@ -2,6 +2,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "DrawDebugHelpers.h" // for testing line traces
+#include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
+#include "EnhancedInputComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Controller.h"
+#include "InputActionValue.h"
+#include "CharacterComponents/InventoryManager.h"
+#include "GameFramework/PlayerState.h"
+#include "Weapon.h"
+#include "Interactable.h"
 #include "FirstPersonCharacter.generated.h"
 
 class UInputComponent;
@@ -60,9 +72,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ChangeWeaponAction;
 	
-	// currently equipped weapon starts out as null as there is no weapon to be equipped
-	AWeapon* equippedWeapon = nullptr;
-
+	
 protected:
 
 	/** ------------------------ INPUT SECTION ------------------------ **/
@@ -111,6 +121,15 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnWeaponChanged OnWeaponChanged; // Event for HotBar
+
+	// currently equipped weapon starts out as null as there is no weapon to be equipped
+	AWeapon* equippedWeapon = nullptr;
+
+	// boolean to see if the person has a weapon or not
+	bool HasWeapon = false;
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	FORCEINLINE bool GetHasWeapon() const { return HasWeapon; }
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

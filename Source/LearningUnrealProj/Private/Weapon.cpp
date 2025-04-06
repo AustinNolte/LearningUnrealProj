@@ -43,11 +43,7 @@ void AWeapon::Fire(FVector3d direction) {
 		actorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
 		World->SpawnActor<AProjectile>(ProjectileClass, spawnLocation, spawnRotation, actorSpawnParams);
-
-		
 	}
 }
 
-void AWeapon::Tick(float DeltaTime) {
-
-}
+void AWeapon::Tick(float DeltaTime) {}

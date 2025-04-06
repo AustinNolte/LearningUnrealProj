@@ -2,9 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "FPS_GameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "BasicEnemy.generated.h"
 
 class USkeletalMeshComponent;
+
+
 
 UCLASS()
 class LEARNINGUNREALPROJ_API ABasicEnemy : public ACharacter{

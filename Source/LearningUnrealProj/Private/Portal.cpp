@@ -38,7 +38,7 @@ void APortal::BeginPlay() {
 	}
 }
 
-void APortal::Interact(AActor* InteractingActor){
+void APortal::Interact_Implementation(AActor* InteractingActor){
 	
 	AFirstPersonCharacter* Player = Cast<AFirstPersonCharacter>(InteractingActor);
 	if (Player && WorldName != "") {

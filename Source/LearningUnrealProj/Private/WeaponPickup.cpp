@@ -60,7 +60,7 @@ void AWeaponPickup::BeginPlay() {
 }
 
 
-void AWeaponPickup::Interact(AActor* InteractingActor) {
+void AWeaponPickup::Interact_Implementation(AActor* InteractingActor) {
 
 	AFirstPersonCharacter* Player = Cast<AFirstPersonCharacter>(InteractingActor);
 	if (Player && WeaponClass) {

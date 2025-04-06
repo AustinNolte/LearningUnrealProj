@@ -7,6 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "FirstPersonCharacter.h"
+#include "FPS_GameModeBase.h"
 #include "Portal.generated.h"
 
 
@@ -31,7 +32,7 @@ public:
 	UTextRenderComponent* DisplayText;
 
 	// when player interacts swap world
-	virtual void Interact(AActor* InteractingActor) override;
+	virtual void Interact_Implementation(AActor* InteractingActor) override;
 
 	// Set values when begin play happens
 	virtual void BeginPlay() override;

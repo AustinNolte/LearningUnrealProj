@@ -1,16 +1,4 @@
 #include "FirstPersonCharacter.h"
-#include "DrawDebugHelpers.h" // for testing line traces
-#include "EnhancedInputSubsystems.h"
-#include "Camera/CameraComponent.h"
-#include "EnhancedInputComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/Controller.h"
-#include "InputActionValue.h"
-#include "CharacterComponents/InventoryManager.h"
-#include "GameFramework/PlayerState.h"
-#include "Weapon.h"
-#include "Interactable.h"
 
 // Sets default values
 AFirstPersonCharacter::AFirstPersonCharacter(){
@@ -26,6 +14,7 @@ AFirstPersonCharacter::AFirstPersonCharacter(){
 	camera->bUsePawnControlRotation = true;
 
 	Inventory = CreateDefaultSubobject<UInventoryManager>(TEXT("InventoryManager"));
+
 }
 
 void AFirstPersonCharacter::NotifyControllerChanged() {
@@ -182,6 +171,7 @@ void AFirstPersonCharacter::equipWeapon(AWeapon* weapon) {
 	(equippedWeapon->GetSkeleton())->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("WeaponSocket"));
 	equippedWeapon->GetSkeleton()->SetVisibility(true);
 
+	HasWeapon = true;
 	OnWeaponChanged.Broadcast(equippedWeapon);
 }
 

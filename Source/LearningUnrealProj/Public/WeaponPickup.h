@@ -39,7 +39,7 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void Interact(AActor* InteractingActor) override;
+	virtual void Interact_Implementation(AActor* InteractingActor) override;
 
 	virtual void Tick(float DeltaTime) override;
 		
