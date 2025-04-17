@@ -10,9 +10,9 @@
 
 class USkeletalMeshComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDied, int8, Value);
 
-
-UCLASS()
+UCLASS(config = Game)
 class LEARNINGUNREALPROJ_API ABasicEnemy : public ACharacter{
 	
 	GENERATED_BODY()
@@ -20,13 +20,12 @@ class LEARNINGUNREALPROJ_API ABasicEnemy : public ACharacter{
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-	float health; // health of enemy
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-	float damage; // damage per attack
+	float Health; // health of enemy
 
 	// Sets default values for this pawn's properties
 	ABasicEnemy();
+
+	FOnEnemyDied EnemyDied;
 
 protected:
 	// Called when the game starts or when spawned
@@ -38,6 +37,7 @@ public:
 
 	// taking damage and handling death
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
 	virtual void Die();
 
 };

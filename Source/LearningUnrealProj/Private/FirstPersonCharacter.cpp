@@ -116,7 +116,7 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 
 		FHitResult OutHit;
 		if (GetWorld()->LineTraceSingleByChannel(OutHit, camLoc, endPoint, ECC_Pawn, CollisionParams)){
-			UE_LOG(LogTemp, Warning, TEXT("Hit at Location: %s"), *OutHit.Location.ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("Hit at Location: %s"), *OutHit.Location.ToString());
 			 
 		}
 
