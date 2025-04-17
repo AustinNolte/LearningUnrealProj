@@ -1,8 +1,12 @@
-#include "BehaviorTree/BehaviorTree.h"
 #include "EnemyComponents/BasicAiController.h"
 
 ABasicAiController::ABasicAiController() {
 
+	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception"));
+	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ABasicAiController::OnTargetPerceptionUpdate);
+
+	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
+	BehaviorTree = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTree"));
 
 }
 
@@ -10,7 +14,9 @@ ABasicAiController::ABasicAiController() {
 void ABasicAiController::BeginPlay() {
 	Super::BeginPlay();
 
-	if (behaviorTree) {
-		RunBehaviorTree(behaviorTree);
-	}
+
+}
+
+void ABasicAiController::OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Sitmulus){
+
 }
