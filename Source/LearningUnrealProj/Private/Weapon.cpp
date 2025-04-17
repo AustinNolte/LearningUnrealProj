@@ -27,7 +27,7 @@ void AWeapon::BeginPlay(){
 	Super::BeginPlay();
 	
 }
-
+// Shoots towards Direction with a given bloom associated with the current weapon being used held in FireSpread
 void AWeapon::Fire(FVector3d direction) {
 
 	UWorld* const World = GetWorld();
@@ -36,7 +36,12 @@ void AWeapon::Fire(FVector3d direction) {
 
 		FVector3d spawnLocation = SkeletalMesh->GetSocketLocation("ProjectileSpawn");
 		//UE_LOG(LogTemp, Warning, TEXT("Direction of shot: %s"), *direction.ToString());
-		FRotator spawnRotation = UKismetMathLibrary::FindLookAtRotation(FVector::ZeroVector, direction);
+
+		FRotator spawnRotation = direction.Rotation();
+
+		spawnRotation.Yaw += FMath::FRandRange(-FireSpread, FireSpread);
+		spawnRotation.Pitch += FMath::FRandRange(-FireSpread, FireSpread);
+
 
 		//Set Spawn Collision Handling Override
 		FActorSpawnParameters actorSpawnParams;

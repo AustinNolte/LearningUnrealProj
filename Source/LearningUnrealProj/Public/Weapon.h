@@ -24,6 +24,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (AllowPrivateAccess = "true"))
 	float FireRate;
 
+	// bloom amount for firing a weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (AlloPrivateAccess = "true"))
+	float FireSpread = 0.0;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* SkeletalMesh;
 
