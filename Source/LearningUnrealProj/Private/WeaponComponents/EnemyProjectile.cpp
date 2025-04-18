@@ -1,12 +1,7 @@
-#include "WeaponComponents/Projectile.h"
-#include "Components/SphereComponent.h"
-#include "Components/StaticMeshComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "BasicEnemy.h"
+#include "WeaponComponents/EnemyProjectile.h"
 
 // Sets default values
-AProjectile::AProjectile()
+AEnemyProjectile::AEnemyProjectile()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -53,16 +48,16 @@ AProjectile::AProjectile()
 	damage = 1;
 }
 
-void AProjectile::BeginPlay() {
+void AEnemyProjectile::BeginPlay() {
 
 	Super::BeginPlay();
 
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnOverlapBegin);
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyProjectile::OnOverlapBegin);
 
 }
 
 // Called every frame
-void AProjectile::Tick(float DeltaTime) {
+void AEnemyProjectile::Tick(float DeltaTime) {
 
 	timeToLive -= DeltaTime;
 
@@ -72,11 +67,11 @@ void AProjectile::Tick(float DeltaTime) {
 	}
 }
 
-void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult){
+void AEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult){
 	//first check if it is an enemy it is hitting
-	ABasicEnemy* EnemyHit = Cast<ABasicEnemy>(OtherActor);
-	if (EnemyHit) {
-		UGameplayStatics::ApplyDamage(EnemyHit, damage, GetInstigatorController(), this, UDamageType::StaticClass());
+	AFirstPersonCharacter* PlayerHit = Cast<AFirstPersonCharacter>(OtherActor);
+	if (PlayerHit) {
+		UGameplayStatics::ApplyDamage(PlayerHit, damage, GetInstigatorController(), this, UDamageType::StaticClass());
 		Destroy();
 	}
 }

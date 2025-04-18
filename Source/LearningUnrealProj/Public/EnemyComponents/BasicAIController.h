@@ -41,5 +41,5 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	void OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Sitmulus);
+	void OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus);
 };

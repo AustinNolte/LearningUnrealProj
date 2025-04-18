@@ -17,6 +17,15 @@ void ABasicAiController::BeginPlay() {
 
 }
 
-void ABasicAiController::OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Sitmulus){
+void ABasicAiController::OnTargetPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus){
 
+	if (Stimulus.WasSuccessfullySensed())
+	{
+		StopMovement();
+		Blackboard->SetValueAsObject("Player", Actor);
+	}
+	else
+	{
+		Blackboard->ClearValue("Player");
+	}
 }

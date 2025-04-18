@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "EnemyTypes/LongRangeEnemy.h"
 
 ALongRangeEnemy::ALongRangeEnemy() {
@@ -12,6 +9,8 @@ ALongRangeEnemy::ALongRangeEnemy() {
 }
 
 void ALongRangeEnemy::BeginPlay() {
+	Super::BeginPlay();
+
 	if (WeaponClass){
 		Weapon->SetChildActorClass(WeaponClass);
 	}
@@ -22,26 +21,28 @@ void ALongRangeEnemy::BeginPlay() {
 
 
 void ALongRangeEnemy::FireWeapon(){
+	UE_LOG(LogTemp, Warning, TEXT("CanFire: %d"), canFire);
 
 	if (Weapon && canFire) {
 
-		
+		UE_LOG(LogTemp, Warning, TEXT("Here in FireWeapon"));
 		FVector3d endPoint = Target->GetActorLocation();
-		FVector3d Direction = endPoint - Cast<AWeapon>(Weapon->GetChildActor())->GetSkeleton()->GetSocketLocation("ProjectileSpawn");
+		FVector3d Direction = endPoint - (Cast<AEnemyWeapon>(Weapon->GetChildActor())->GetSkeleton()->GetSocketLocation("ProjectileSpawn"));
 
 		Direction.Normalize();
-		Cast<AWeapon>(Weapon->GetChildActor())->Fire(Direction);
+		UE_LOG(LogTemp, Warning, TEXT("Direction: %s"), *Direction.ToString());
+		Cast<AEnemyWeapon>(Weapon->GetChildActor())->Fire(Direction);
+		canFire = false;
 	}
 }
 
 void ALongRangeEnemy::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	
-	if (Weapon) {
+	if (Weapon) {	
 		
 		timeSinceLastFire += DeltaTime;
-
-		if (timeSinceLastFire >= Cast<AWeapon>(Weapon->GetChildActor())->GetFireRate() && !canFire) {
+		if (timeSinceLastFire >= Cast<AEnemyWeapon>(Weapon->GetChildActor())->GetFireRate() && !canFire) {
 			canFire = true;
 		}
 	}

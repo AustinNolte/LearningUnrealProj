@@ -2,14 +2,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Projectile.generated.h"
+#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "FirstPersonCharacter.h"
+#include "EnemyProjectile.generated.h"
+
 
 class USphereComponent;
 class UStaticMeshComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
-class LEARNINGUNREALPROJ_API AProjectile : public AActor {
+class LEARNINGUNREALPROJ_API AEnemyProjectile : public AActor {
 
 	GENERATED_BODY()
 
@@ -27,7 +33,7 @@ public:
 	UProjectileMovementComponent* ProjectileMovement;
 
 	// Sets default values for this actor
-	AProjectile();
+	AEnemyProjectile();
 
 	// Sets time to live, adjustable in blueprint
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Projectile)
@@ -46,8 +52,8 @@ public:
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
-	  
+
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

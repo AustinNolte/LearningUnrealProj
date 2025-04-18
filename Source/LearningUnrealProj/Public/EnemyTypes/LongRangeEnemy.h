@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BasicEnemy.h"
-#include "Weapon.h"
+#include "EnemyWeapon.h"
 #include "FirstPersonCharacter.h"
 #include "LongRangeEnemy.generated.h"
 
@@ -31,7 +31,7 @@ public:
 	TObjectPtr<AFirstPersonCharacter> Target;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
-	TSubclassOf<AWeapon> WeaponClass;
+	TSubclassOf<AEnemyWeapon> WeaponClass;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
