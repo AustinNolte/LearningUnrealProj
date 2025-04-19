@@ -17,6 +17,20 @@ AFirstPersonCharacter::AFirstPersonCharacter(){
 
 }
 
+void AFirstPersonCharacter::BeginPlay(){
+	Super::BeginPlay();
+
+	UPlayerAnimInstance* AnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	
+	if (AnimInstance) {
+		AnimationInstance = AnimInstance;
+	}
+
+	GetCharacterMovement()->MaxWalkSpeed = DefaultSprintSpeed;
+	GetCharacterMovement()->MaxAcceleration = DefaultAccelerationSpeed;
+
+}
+
 void AFirstPersonCharacter::NotifyControllerChanged() {
 
 	Super::NotifyControllerChanged();
@@ -55,6 +69,10 @@ void AFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		 
 		// Change Weapon Input
 		EnhancedIC->BindAction(ChangeWeaponAction, ETriggerEvent::Triggered, this, &AFirstPersonCharacter::ChangeWeapon);
+
+		// Hold to Spring
+		EnhancedIC->BindAction(SprintAction, ETriggerEvent::Triggered, this, &AFirstPersonCharacter::StartSprint);
+		EnhancedIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &AFirstPersonCharacter::StopSprint);
 	}
 }
 
@@ -125,6 +143,9 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 		shotDirection.Normalize();
 		equippedWeapon->Fire(shotDirection);
 
+		if (AnimationInstance){
+			AnimationInstance->PlayFireMontage();
+		}
 
 
 		canFire = false;
@@ -148,6 +169,20 @@ void AFirstPersonCharacter::ChangeWeapon(const FInputActionValue& Value) {
 	} else {
 		equipWeapon(newWeapon);
 	}
+}
+
+void AFirstPersonCharacter::StartSprint(const FInputActionValue& Value){
+	bIsSprinting = true;
+
+	GetCharacterMovement()->MaxWalkSpeed = MaxSprintSpeed;
+	GetCharacterMovement()->MaxAcceleration = MaxAccelerationSpeed;
+}
+
+void AFirstPersonCharacter::StopSprint(const FInputActionValue& Value) {
+	bIsSprinting = false;
+
+	GetCharacterMovement()->MaxWalkSpeed = DefaultSprintSpeed;
+	GetCharacterMovement()->MaxAcceleration = DefaultAccelerationSpeed;
 }
 
 //** ------------------------ INVENTORY SECTION ------------------------ **/
@@ -187,4 +222,6 @@ void AFirstPersonCharacter::Tick(float DeltaTime) {
 			canFire = true;
 		}
 	}
-}
+	UE_LOG(LogTemp, Warning, TEXT("SPEED: %f"), GetVelocity().Size());
+	UE_LOG(LogTemp, Warning, TEXT("bIsSprinting: %d"), bIsSprinting);
+} 

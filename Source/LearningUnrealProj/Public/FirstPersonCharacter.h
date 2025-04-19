@@ -14,6 +14,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Weapon.h"
 #include "Interactable.h"
+#include "CharacterComponents/PlayerAnimInstance.h"
 #include "FirstPersonCharacter.generated.h"
 
 class UInputComponent;
@@ -23,6 +24,7 @@ struct FInputActionValue;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class UInventoryManager; 
+class UPlayerAnimInstance;
 class AWeapon;
 
 
@@ -39,6 +41,9 @@ public:
 	// Sets default values for this character's properties
 	AFirstPersonCharacter();
 
+	/* Animation Asset for quick referencing */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
+	UPlayerAnimInstance* AnimationInstance; 
 
 	/** Camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -71,7 +76,27 @@ public:
 	/** ChangeWeapon Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ChangeWeaponAction;
-	
+
+	/* Sprint Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	UInputAction* SprintAction; 
+
+
+	/* Max Sprint Speed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float MaxSprintSpeed = 600.0f;
+
+	/* Max acceleration when sprinting */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float MaxAccelerationSpeed = 2048.0f;
+
+	/* Default Sprint Speed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float DefaultSprintSpeed = 300.0f; 
+
+	/* Default acceleration */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float DefaultAccelerationSpeed = 1024.0f;
 	
 protected:
 
@@ -97,6 +122,12 @@ protected:
 
 	//** Called for change weapon */
 	virtual void ChangeWeapon(const FInputActionValue& Value);
+
+	virtual void StartSprint(const FInputActionValue& Value);
+
+	virtual void StopSprint(const FInputActionValue& Value);
+
+	bool bIsSprinting = false;
 
 	/** ------------------------ INVENTORY SECTION ------------------------ **/
 	
@@ -133,6 +164,8 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void BeginPlay() override;
 
 private:
 	/** ------------------------ WEAPON FIRERATE HANDLING ------------------------ **/
