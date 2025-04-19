@@ -84,19 +84,19 @@ public:
 
 	/* Max Sprint Speed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
-	float MaxSprintSpeed = 600.0f;
+	float MaxSprintSpeed = 900.0f;
 
 	/* Max acceleration when sprinting */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
-	float MaxAccelerationSpeed = 2048.0f;
+	float MaxAccelerationSpeed = 3072.0f;
 
 	/* Default Sprint Speed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
-	float DefaultSprintSpeed = 300.0f; 
+	float DefaultSprintSpeed = 600.0f; 
 
 	/* Default acceleration */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
-	float DefaultAccelerationSpeed = 1024.0f;
+	float DefaultAccelerationSpeed = 2048.0f;
 	
 protected:
 

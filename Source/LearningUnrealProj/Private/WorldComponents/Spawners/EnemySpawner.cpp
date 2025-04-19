@@ -107,6 +107,7 @@ TSubclassOf<ABasicEnemy> AEnemySpawner::SelectEnemy(FWaveData CurrentWaveData){
 		float TotalWeight = 0.f;
 		for (const FEnemySpawnData* Row : AllRows) {
 			if (CurrentWaveData.EnemyTypes.Contains(Row->EnemyClass)) {
+				//UE_LOG(LogTemp,Warning, TEXT("EnemyClass: %s"), *Row->EnemyClass.GetDefaultObject()->GetName())
 				TotalWeight += Row->SpawnWeight;
 			}
 		}
@@ -118,7 +119,9 @@ TSubclassOf<ABasicEnemy> AEnemySpawner::SelectEnemy(FWaveData CurrentWaveData){
 		TotalWeight = 0.f;
 
 		for (const FEnemySpawnData* Row : AllRows) {
-			TotalWeight += Row->SpawnWeight;
+			if (CurrentWaveData.EnemyTypes.Contains(Row->EnemyClass)) {
+				TotalWeight += Row->SpawnWeight;
+			}
 
 			if (RandomSelection <= TotalWeight) {
 				return Row->EnemyClass;
