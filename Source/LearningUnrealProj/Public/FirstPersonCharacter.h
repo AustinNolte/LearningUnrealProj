@@ -81,23 +81,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	UInputAction* SprintAction; 
 
+	/* Reload Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	UInputAction* ReloadAction;
+
 
 	/* Max Sprint Speed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
-	float MaxSprintSpeed = 900.0f;
-
-	/* Max acceleration when sprinting */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
-	float MaxAccelerationSpeed = 3072.0f;
-
-	/* Default Sprint Speed */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
-	float DefaultSprintSpeed = 600.0f; 
+	float WalkingSpeed = 1000.0f;
 
 	/* Default acceleration */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
-	float DefaultAccelerationSpeed = 2048.0f;
+	float WalkingAccelerationSpeed = 2048.0f;
 	
+	/* Default Sprint Speed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float SprintSpeed = 2000.0f; 
+
+	/* Max acceleration when sprinting */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float SprintAccelerationSpeed = 3072.0f;
+
 protected:
 
 	/** ------------------------ INPUT SECTION ------------------------ **/
@@ -122,6 +126,9 @@ protected:
 
 	//** Called for change weapon */
 	virtual void ChangeWeapon(const FInputActionValue& Value);
+
+	/* Reload Action Function */
+	virtual void ReloadWeapon(const FInputActionValue& Value);
 
 	virtual void StartSprint(const FInputActionValue& Value);
 

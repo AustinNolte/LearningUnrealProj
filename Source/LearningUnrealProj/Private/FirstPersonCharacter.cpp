@@ -26,8 +26,15 @@ void AFirstPersonCharacter::BeginPlay(){
 		AnimationInstance = AnimInstance;
 	}
 
-	GetCharacterMovement()->MaxWalkSpeed = DefaultSprintSpeed;
-	GetCharacterMovement()->MaxAcceleration = DefaultAccelerationSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
+	
+	// wanting fast arcade style movement
+	
+	GetCharacterMovement()->MaxAcceleration = 999999; 
+	GetCharacterMovement()->BrakingFrictionFactor = 100.0f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 10000.0f;
+	GetCharacterMovement()->AirControl = 1.0f;
+
 
 }
 
@@ -70,9 +77,13 @@ void AFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		// Change Weapon Input
 		EnhancedIC->BindAction(ChangeWeaponAction, ETriggerEvent::Triggered, this, &AFirstPersonCharacter::ChangeWeapon);
 
-		// Hold to Spring
+		// Hold to Sprint
 		EnhancedIC->BindAction(SprintAction, ETriggerEvent::Triggered, this, &AFirstPersonCharacter::StartSprint);
 		EnhancedIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &AFirstPersonCharacter::StopSprint);
+
+		// Reload Input
+		EnhancedIC->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &AFirstPersonCharacter::ReloadWeapon);
+
 	}
 }
 
@@ -122,7 +133,7 @@ void AFirstPersonCharacter::Interact(const FInputActionValue& Value) {
 
 void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 	
-	if (equippedWeapon && canFire) {
+	if (equippedWeapon && canFire && (!(equippedWeapon->bIsReloading)) && (equippedWeapon->CurrentAmmo >= 1)) {
 	
 		FVector3d camLoc = camera->GetComponentLocation();
 		FVector3d camRot = camera->GetForwardVector();
@@ -171,18 +182,26 @@ void AFirstPersonCharacter::ChangeWeapon(const FInputActionValue& Value) {
 	}
 }
 
+void AFirstPersonCharacter::ReloadWeapon(const FInputActionValue& Value){
+	if (equippedWeapon) {
+		equippedWeapon->Reload();
+	}
+
+	// TODO: Put in reload animation
+}
+
 void AFirstPersonCharacter::StartSprint(const FInputActionValue& Value){
 	bIsSprinting = true;
 
-	GetCharacterMovement()->MaxWalkSpeed = MaxSprintSpeed;
-	GetCharacterMovement()->MaxAcceleration = MaxAccelerationSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	//GetCharacterMovement()->MaxAcceleration = SprintAccelerationSpeed;
 }
 
 void AFirstPersonCharacter::StopSprint(const FInputActionValue& Value) {
 	bIsSprinting = false;
 
-	GetCharacterMovement()->MaxWalkSpeed = DefaultSprintSpeed;
-	GetCharacterMovement()->MaxAcceleration = DefaultAccelerationSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
+	//GetCharacterMovement()->MaxAcceleration = WalkingAccelerationSpeed;
 }
 
 //** ------------------------ INVENTORY SECTION ------------------------ **/
@@ -207,6 +226,9 @@ void AFirstPersonCharacter::equipWeapon(AWeapon* weapon) {
 	equippedWeapon->GetSkeleton()->SetVisibility(true);
 
 	HasWeapon = true;
+	if (AnimationInstance) {
+		AnimationInstance->setbHoldingWeapon(HasWeapon);
+	}
 	OnWeaponChanged.Broadcast(equippedWeapon);
 }
 
@@ -222,6 +244,4 @@ void AFirstPersonCharacter::Tick(float DeltaTime) {
 			canFire = true;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("SPEED: %f"), GetVelocity().Size());
-	UE_LOG(LogTemp, Warning, TEXT("bIsSprinting: %d"), bIsSprinting);
 } 
