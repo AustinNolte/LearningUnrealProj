@@ -6,6 +6,7 @@
 #include "BasicEnemy.h"
 #include "EnemyWeapon.h"
 #include "FirstPersonCharacter.h"
+#include "EnemyComponents/RangedEnemyAnimInstance.h"
 #include "LongRangeEnemy.generated.h"
 
 class UChildActorComponent;
@@ -25,6 +26,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	UChildActorComponent* Weapon;
+
+	/* Animation Asset for quick referencing */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
+	URangedEnemyAnimInstance* AnimationInstance;
 
 	// target to shoot at
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Target", meta = (AllowPrivateAccess = "true"))

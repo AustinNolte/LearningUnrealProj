@@ -17,22 +17,31 @@ void ALongRangeEnemy::BeginPlay() {
 
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	Target = Cast<AFirstPersonCharacter>(PlayerCharacter);
+
+	URangedEnemyAnimInstance* AnimInstance = Cast<URangedEnemyAnimInstance>(GetMesh()->GetAnimInstance());
+
+	if (AnimInstance) {
+		AnimationInstance = AnimInstance;
+	}
 }
 
 
 void ALongRangeEnemy::FireWeapon(){
-	UE_LOG(LogTemp, Warning, TEXT("CanFire: %d"), canFire);
 
 	if (Weapon && canFire) {
 
-		UE_LOG(LogTemp, Warning, TEXT("Here in FireWeapon"));
 		FVector3d endPoint = Target->GetActorLocation();
 		FVector3d Direction = endPoint - (Cast<AEnemyWeapon>(Weapon->GetChildActor())->GetSkeleton()->GetSocketLocation("ProjectileSpawn"));
 
 		Direction.Normalize();
-		UE_LOG(LogTemp, Warning, TEXT("Direction: %s"), *Direction.ToString());
-		Cast<AEnemyWeapon>(Weapon->GetChildActor())->Fire(Direction);
+		Cast<AEnemyWeapon>(Weapon->GetChildActor())->Fire(Direction); 
+
+		if (AnimationInstance) {
+			AnimationInstance->PlayFireMontage();
+		}
+
 		canFire = false;
+		timeSinceLastFire = 0.0f;
 	}
 }
 

@@ -141,7 +141,6 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 
 		FCollisionQueryParams CollisionParams;
 
-		//DrawDebugLine(GetWorld(), camLoc, endPoint, FColor::Green, false, 1, 0, 1);
 
 		FHitResult OutHit;
 		if (GetWorld()->LineTraceSingleByChannel(OutHit, camLoc, endPoint, ECC_Pawn, CollisionParams)){
@@ -149,7 +148,6 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 			 
 		}
 
-		//UE_LOG(LogTemp, Warning, TEXT("Actors Current Forward Vector: %s"), *GetActorForwardVector().ToString());
 		FVector3d shotDirection =  endPoint - equippedWeapon->GetSkeleton()->GetSocketLocation("ProjectileSpawn");
 		shotDirection.Normalize();
 		equippedWeapon->Fire(shotDirection);
