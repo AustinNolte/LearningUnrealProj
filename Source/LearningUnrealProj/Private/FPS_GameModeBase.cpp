@@ -10,4 +10,5 @@ void AFPS_GameModeBase::StartPlay() {
 	check(GEngine != nullptr);
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Hello World From FPS_GameModeBase"));
+
 }

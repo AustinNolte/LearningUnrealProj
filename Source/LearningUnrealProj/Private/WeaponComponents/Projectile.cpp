@@ -28,7 +28,7 @@ AProjectile::AProjectile()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	StaticMeshComponent->SetupAttachment(RootComponent);
 
-	// disabling physics for weapon so it floats
+	// disabling physics for projectile so it floats
 	StaticMeshComponent->SetSimulatePhysics(false);
 
 	// Set collision to overlap (instead of block)
@@ -54,9 +54,9 @@ AProjectile::AProjectile()
 }
 
 void AProjectile::BeginPlay() {
+
 	Super::BeginPlay();
 
-	//SphereComponent->OnComponentHit.AddDynamic(this, &AProjectile::OnHit); // when hit call OnHit in AProjectile
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnOverlapBegin);
 
 }
@@ -73,11 +73,9 @@ void AProjectile::Tick(float DeltaTime) {
 }
 
 void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult){
-	UE_LOG(LogTemp, Warning, TEXT("In Projectile Overlap"));
 	//first check if it is an enemy it is hitting
 	ABasicEnemy* EnemyHit = Cast<ABasicEnemy>(OtherActor);
 	if (EnemyHit) {
-		UE_LOG(LogTemp, Warning, TEXT("In Projectile enemy hit"));
 		UGameplayStatics::ApplyDamage(EnemyHit, damage, GetInstigatorController(), this, UDamageType::StaticClass());
 		Destroy();
 	}

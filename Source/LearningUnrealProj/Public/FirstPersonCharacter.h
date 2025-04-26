@@ -2,6 +2,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "DrawDebugHelpers.h" // for testing line traces
+#include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
+#include "EnhancedInputComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Controller.h"
+#include "InputActionValue.h"
+#include "CharacterComponents/InventoryManager.h"
+#include "GameFramework/PlayerState.h"
+#include "Weapon.h"
+#include "Interactable.h"
+#include "CharacterComponents/PlayerAnimInstance.h"
 #include "FirstPersonCharacter.generated.h"
 
 class UInputComponent;
@@ -11,6 +24,7 @@ struct FInputActionValue;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class UInventoryManager; 
+class UPlayerAnimInstance;
 class AWeapon;
 
 
@@ -27,6 +41,9 @@ public:
 	// Sets default values for this character's properties
 	AFirstPersonCharacter();
 
+	/* Animation Asset for quick referencing */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
+	UPlayerAnimInstance* AnimationInstance; 
 
 	/** Camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -59,9 +76,31 @@ public:
 	/** ChangeWeapon Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ChangeWeaponAction;
+
+	/* Sprint Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	UInputAction* SprintAction; 
+
+	/* Reload Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	UInputAction* ReloadAction;
+
+
+	/* Max Sprint Speed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float WalkingSpeed = 1000.0f;
+
+	/* Default acceleration */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float WalkingAccelerationSpeed = 2048.0f;
 	
-	// currently equipped weapon starts out as null as there is no weapon to be equipped
-	AWeapon* equippedWeapon = nullptr;
+	/* Default Sprint Speed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float SprintSpeed = 2000.0f; 
+
+	/* Max acceleration when sprinting */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	float SprintAccelerationSpeed = 3072.0f;
 
 protected:
 
@@ -88,6 +127,15 @@ protected:
 	//** Called for change weapon */
 	virtual void ChangeWeapon(const FInputActionValue& Value);
 
+	/* Reload Action Function */
+	virtual void ReloadWeapon(const FInputActionValue& Value);
+
+	virtual void StartSprint(const FInputActionValue& Value);
+
+	virtual void StopSprint(const FInputActionValue& Value);
+
+	bool bIsSprinting = false;
+
 	/** ------------------------ INVENTORY SECTION ------------------------ **/
 	
 	// Inventory Manager 
@@ -112,8 +160,19 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnWeaponChanged OnWeaponChanged; // Event for HotBar
 
+	// currently equipped weapon starts out as null as there is no weapon to be equipped
+	AWeapon* equippedWeapon = nullptr;
+
+	// boolean to see if the person has a weapon or not
+	bool HasWeapon = false;
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	FORCEINLINE bool GetHasWeapon() const { return HasWeapon; }
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void BeginPlay() override;
 
 private:
 	/** ------------------------ WEAPON FIRERATE HANDLING ------------------------ **/

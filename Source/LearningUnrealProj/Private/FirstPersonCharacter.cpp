@@ -1,16 +1,4 @@
 #include "FirstPersonCharacter.h"
-#include "DrawDebugHelpers.h" // for testing line traces
-#include "EnhancedInputSubsystems.h"
-#include "Camera/CameraComponent.h"
-#include "EnhancedInputComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/Controller.h"
-#include "InputActionValue.h"
-#include "CharacterComponents/InventoryManager.h"
-#include "GameFramework/PlayerState.h"
-#include "Weapon.h"
-#include "Interactable.h"
 
 // Sets default values
 AFirstPersonCharacter::AFirstPersonCharacter(){
@@ -26,6 +14,28 @@ AFirstPersonCharacter::AFirstPersonCharacter(){
 	camera->bUsePawnControlRotation = true;
 
 	Inventory = CreateDefaultSubobject<UInventoryManager>(TEXT("InventoryManager"));
+
+}
+
+void AFirstPersonCharacter::BeginPlay(){
+	Super::BeginPlay();
+
+	UPlayerAnimInstance* AnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	
+	if (AnimInstance) {
+		AnimationInstance = AnimInstance;
+	}
+
+	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
+	
+	// wanting fast arcade style movement
+	
+	GetCharacterMovement()->MaxAcceleration = 999999; 
+	GetCharacterMovement()->BrakingFrictionFactor = 100.0f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 10000.0f;
+	GetCharacterMovement()->AirControl = 1.0f;
+
+
 }
 
 void AFirstPersonCharacter::NotifyControllerChanged() {
@@ -66,6 +76,14 @@ void AFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		 
 		// Change Weapon Input
 		EnhancedIC->BindAction(ChangeWeaponAction, ETriggerEvent::Triggered, this, &AFirstPersonCharacter::ChangeWeapon);
+
+		// Hold to Sprint
+		EnhancedIC->BindAction(SprintAction, ETriggerEvent::Triggered, this, &AFirstPersonCharacter::StartSprint);
+		EnhancedIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &AFirstPersonCharacter::StopSprint);
+
+		// Reload Input
+		EnhancedIC->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &AFirstPersonCharacter::ReloadWeapon);
+
 	}
 }
 
@@ -115,7 +133,7 @@ void AFirstPersonCharacter::Interact(const FInputActionValue& Value) {
 
 void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 	
-	if (equippedWeapon && canFire) {
+	if (equippedWeapon && canFire && (!(equippedWeapon->bIsReloading)) && (equippedWeapon->CurrentAmmo >= 1)) {
 	
 		FVector3d camLoc = camera->GetComponentLocation();
 		FVector3d camRot = camera->GetForwardVector();
@@ -123,19 +141,20 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 
 		FCollisionQueryParams CollisionParams;
 
-		//DrawDebugLine(GetWorld(), camLoc, endPoint, FColor::Green, false, 1, 0, 1);
 
 		FHitResult OutHit;
 		if (GetWorld()->LineTraceSingleByChannel(OutHit, camLoc, endPoint, ECC_Pawn, CollisionParams)){
-			UE_LOG(LogTemp, Warning, TEXT("Hit at Location: %s"), *OutHit.Location.ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("Hit at Location: %s"), *OutHit.Location.ToString());
 			 
 		}
 
-		//UE_LOG(LogTemp, Warning, TEXT("Actors Current Forward Vector: %s"), *GetActorForwardVector().ToString());
 		FVector3d shotDirection =  endPoint - equippedWeapon->GetSkeleton()->GetSocketLocation("ProjectileSpawn");
 		shotDirection.Normalize();
 		equippedWeapon->Fire(shotDirection);
 
+		if (AnimationInstance){
+			AnimationInstance->PlayFireMontage();
+		}
 
 
 		canFire = false;
@@ -161,6 +180,28 @@ void AFirstPersonCharacter::ChangeWeapon(const FInputActionValue& Value) {
 	}
 }
 
+void AFirstPersonCharacter::ReloadWeapon(const FInputActionValue& Value){
+	if (equippedWeapon) {
+		equippedWeapon->Reload();
+	}
+
+	// TODO: Put in reload animation
+}
+
+void AFirstPersonCharacter::StartSprint(const FInputActionValue& Value){
+	bIsSprinting = true;
+
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	//GetCharacterMovement()->MaxAcceleration = SprintAccelerationSpeed;
+}
+
+void AFirstPersonCharacter::StopSprint(const FInputActionValue& Value) {
+	bIsSprinting = false;
+
+	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
+	//GetCharacterMovement()->MaxAcceleration = WalkingAccelerationSpeed;
+}
+
 //** ------------------------ INVENTORY SECTION ------------------------ **/
 
 void AFirstPersonCharacter::addWeapon(AWeapon* weapon) {
@@ -182,6 +223,10 @@ void AFirstPersonCharacter::equipWeapon(AWeapon* weapon) {
 	(equippedWeapon->GetSkeleton())->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("WeaponSocket"));
 	equippedWeapon->GetSkeleton()->SetVisibility(true);
 
+	HasWeapon = true;
+	if (AnimationInstance) {
+		AnimationInstance->setbHoldingWeapon(HasWeapon);
+	}
 	OnWeaponChanged.Broadcast(equippedWeapon);
 }
 
@@ -197,4 +242,4 @@ void AFirstPersonCharacter::Tick(float DeltaTime) {
 			canFire = true;
 		}
 	}
-}
+} 

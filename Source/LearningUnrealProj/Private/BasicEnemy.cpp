@@ -1,7 +1,4 @@
 #include "BasicEnemy.h"
-#include "Kismet/GameplayStatics.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ABasicEnemy::ABasicEnemy() {
@@ -33,11 +30,11 @@ void ABasicEnemy::Tick(float DeltaTime){
 // Using Kismet GameplayStatistics functions for damage
 float ABasicEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser){
 	
-	health -= DamageAmount;
+	Health -= DamageAmount;
 	
-	UE_LOG(LogTemp, Log, TEXT("Enemy took damage! Health remaining: %f"), health);
+	UE_LOG(LogTemp, Log, TEXT("Enemy took damage! Health remaining: %f"), Health);
 
-	if (health <= 0) {
+	if (Health <= 0) {
 		Die();
 	}
 
@@ -48,6 +45,11 @@ void ABasicEnemy::Die() {
 
 	UE_LOG(LogTemp, Log, TEXT("Enemy Died!"));
 
+	AFPS_GameModeBase* GameMode = Cast<AFPS_GameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GameMode){
+		GameMode->IncreaseKillCount();
+	}
+	EnemyDied.Broadcast(1);
 	Destroy();
 }
-
