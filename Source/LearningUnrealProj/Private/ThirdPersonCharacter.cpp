@@ -1,13 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "ThirdPersonCharacter.h"
 
 // Sets default values
 AThirdPersonCharacter::AThirdPersonCharacter()
 {
 	// Tick is not needed every frame, turning it off for performence boost
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	// Adjusting Size of Physics Component
 	GetCapsuleComponent()->InitCapsuleSize(55.0f, 96.0f);
@@ -35,27 +32,47 @@ AThirdPersonCharacter::AThirdPersonCharacter()
 
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComponent"));
+	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("WeaponComponent"));
 
-	//// Attach to mesh at socket
+	// Attach to mesh at socket
 	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
-
-	HurtBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HurtBox"));
-	HurtBox->SetupAttachment(Weapon);
-
-	// Collision for weapon should only be set when swinging
-	HurtBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 }
 
 // Called when the game starts or when spawned
 void AThirdPersonCharacter::BeginPlay(){
 	Super::BeginPlay();
+
+	AnimInstance = Cast<UMeleePlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (!AnimInstance) return;
+
+	Stamina = MAX_STAMINA;
+
+	Health = MAX_HEALTH;
+
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		CurrWeapon->SetPlayerOwner(this);
+	}
 }
 
 // Called every frame
 void AThirdPersonCharacter::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
+
+	if (bRegenHealth) {
+		Health = Health + (HealthRegenRate * DeltaTime);
+		if (Health > MAX_HEALTH) {
+			Health = MAX_HEALTH;
+			bRegenHealth = false;
+		}
+	}
+	if (bRegenStamina) {
+		Stamina = Stamina + (StaminaRegenRate * DeltaTime);
+		if (Stamina > MAX_STAMINA) {
+			Stamina = MAX_STAMINA;
+			bRegenStamina = false;
+		}
+	}
 }
 
 /** ------------------------ INPUT SECTION ------------------------ **/
@@ -90,6 +107,18 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Interact Input
 		EnhancedIC->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Interact);
+		
+		// LightAttackAction Input
+		EnhancedIC->BindAction(LightAttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::LightAttack);
+
+		// MediumAttackAction Input
+		EnhancedIC->BindAction(MediumAttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::MediumAttack);
+
+		// HeavyAttackAction Input
+		EnhancedIC->BindAction(HeavyAttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::HeavyAttack);
+
+		// SpecialAttackAction Input
+		EnhancedIC->BindAction(SpecialAttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::SpecialAttack);
 	}
 }
 
@@ -143,4 +172,119 @@ void AThirdPersonCharacter::Interact(const FInputActionValue& Value) {
 			InteractableActor->Interact(this);
 		}
 	}
+}
+
+/* 
+*
+* Stamina Can be negative, this is to allow for a punishment of using too much as it will take longer to get to a positive number again
+* 
+*/
+
+void AThirdPersonCharacter::LightAttack(const FInputActionValue& Value){
+	FAttackData AttackData = Cast<AMeleeWeapon>(Weapon->GetChildActor())->GetLightAttackData();
+	AttackCombo(AttackData);
+}
+
+void AThirdPersonCharacter::MediumAttack(const FInputActionValue& Value) {
+	FAttackData AttackData = Cast<AMeleeWeapon>(Weapon->GetChildActor())->GetMediumAttackData();
+	AttackCombo(AttackData);
+}
+
+void AThirdPersonCharacter::HeavyAttack(const FInputActionValue& Value) {
+	FAttackData AttackData = Cast<AMeleeWeapon>(Weapon->GetChildActor())->GetHeavyAttackData();
+	AttackCombo(AttackData);
+}
+
+void AThirdPersonCharacter::SpecialAttack(const FInputActionValue& Value) {
+	FAttackData AttackData = Cast<AMeleeWeapon>(Weapon->GetChildActor())->GetSpecialAttackData();
+	AttackCombo(AttackData);
+}
+
+int AThirdPersonCharacter::GetCurrentAttackIndex(){
+	if (bWantsToCombo) {
+		return CurrentAttackIndex - 1;
+	}else
+		return CurrentAttackIndex;
+}
+
+void AThirdPersonCharacter::AttackCombo(FAttackData Data){
+	if (bAttacking && !bWantsToCombo) {
+		bWantsToCombo = true;
+		CurrentAttackIndex++;
+	}
+	if (Stamina > 0 && CurrentAttackIndex < Data.StaminaPerAttack.Num()) {
+		Stamina -= Data.StaminaPerAttack[CurrentAttackIndex];
+		StartStaminaRegenDelay();
+	}
+	else {
+		bAttacking = false;
+		return;
+	}
+	if (!bAttacking) {
+		CurrentAttackData = Data;
+		AnimInstance->PlayMontage(Data.AttackMontages);
+		bAttacking = true;
+	}
+}
+
+void AThirdPersonCharacter::EnableComboWindow() {
+	bEnemyHitDuringAttack = false;
+	bWantsToCombo = false;
+}
+
+void AThirdPersonCharacter::DisableComboWindow(){
+	if (!bWantsToCombo) {
+		AnimInstance->StopMontage(CurrentAttackData.AttackMontages);
+		ResetAttackState();
+	}
+}
+
+void AThirdPersonCharacter::EnableWeaponHurtBox() {
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		CurrWeapon->EnableHurtBox();
+	}
+}
+
+void AThirdPersonCharacter::DisableWeaponHurtBox() {
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		CurrWeapon->DisableHurtBox();
+	}
+}
+
+void AThirdPersonCharacter::ResetAttackState(){
+	//UE_LOG(LogTemp, Warning, TEXT("In ResetAttackState"));
+	bWantsToCombo = false;
+	bAttacking = false;
+	bEnemyHitDuringAttack = false;
+	CurrentAttackIndex = 0;
+	CurrentAttackData = FAttackData();
+}
+
+// needed for last hit to ensure it hits and does correct amount of damage.
+void AThirdPersonCharacter::LastHit() {
+	bEnemyHitDuringAttack = false;
+	bWantsToCombo = false;
+}
+
+void AThirdPersonCharacter::StartStaminaRegenDelay(){
+	GetWorld()->GetTimerManager().SetTimer(
+		StaminaRegenTimer,
+		this,
+		&AThirdPersonCharacter::EnableStaminaRegen,
+		StaminaRegenDelay,   // Delay in seconds
+		false   // Don't loop
+	);
+	UE_LOG(LogTemp, Warning, TEXT("Stamina Regen Set: %f"), Stamina);
+}
+
+void AThirdPersonCharacter::StartHelathRegenDelay(){
+	GetWorld()->GetTimerManager().SetTimer(
+		HealthRegenTimer,
+		this,
+		&AThirdPersonCharacter::EnableHealthRegen,
+		HealthRegenDelay,   // Delay in seconds
+		false   // Don't loop
+	);
 }

@@ -30,11 +30,14 @@ void UMeleePlayerAnimInstance::NativeInitializeAnimation(){
 	if (!PlayerMovementComp) return;
 }
 
-void UMeleePlayerAnimInstance::PlayLightComboMontage() {
+void UMeleePlayerAnimInstance::PlayMontage(UAnimMontage* Montage) {
 	
-	if (LightAttackComboMontage && !Montage_IsPlaying(LightAttackComboMontage)) {
-		Montage_Play(LightAttackComboMontage);
+	if (!IsAnyMontagePlaying()) {
+		Montage_Play(Montage);
 	}
 }
 
-
+void UMeleePlayerAnimInstance::StopMontage(UAnimMontage* Montage) {
+	
+	Montage_Stop(0.0f, Montage);
+}
