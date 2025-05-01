@@ -51,7 +51,7 @@ void AThirdPersonCharacter::BeginPlay(){
 
 	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
 	if (CurrWeapon) {
-		CurrWeapon->SetPlayerOwner(this);
+		CurrWeapon->SetPlayerOwner(this, AnimInstance);
 	}
 }
 
@@ -181,91 +181,31 @@ void AThirdPersonCharacter::Interact(const FInputActionValue& Value) {
 */
 
 void AThirdPersonCharacter::LightAttack(const FInputActionValue& Value){
-	FAttackData AttackData = Cast<AMeleeWeapon>(Weapon->GetChildActor())->GetLightAttackData();
-	AttackCombo(AttackData);
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		CurrWeapon->AttackCombo(CurrWeapon->GetLightAttackData());
+	}
 }
 
 void AThirdPersonCharacter::MediumAttack(const FInputActionValue& Value) {
-	FAttackData AttackData = Cast<AMeleeWeapon>(Weapon->GetChildActor())->GetMediumAttackData();
-	AttackCombo(AttackData);
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		CurrWeapon->AttackCombo(CurrWeapon->GetLightAttackData());
+	}
 }
 
 void AThirdPersonCharacter::HeavyAttack(const FInputActionValue& Value) {
-	FAttackData AttackData = Cast<AMeleeWeapon>(Weapon->GetChildActor())->GetHeavyAttackData();
-	AttackCombo(AttackData);
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		CurrWeapon->AttackCombo(CurrWeapon->GetLightAttackData());
+	}
 }
 
 void AThirdPersonCharacter::SpecialAttack(const FInputActionValue& Value) {
-	FAttackData AttackData = Cast<AMeleeWeapon>(Weapon->GetChildActor())->GetSpecialAttackData();
-	AttackCombo(AttackData);
-}
-
-int AThirdPersonCharacter::GetCurrentAttackIndex(){
-	if (bWantsToCombo) {
-		return CurrentAttackIndex - 1;
-	}else
-		return CurrentAttackIndex;
-}
-
-void AThirdPersonCharacter::AttackCombo(FAttackData Data){
-	if (bAttacking && !bWantsToCombo) {
-		bWantsToCombo = true;
-		CurrentAttackIndex++;
-	}
-	if (Stamina > 0 && CurrentAttackIndex < Data.StaminaPerAttack.Num()) {
-		Stamina -= Data.StaminaPerAttack[CurrentAttackIndex];
-		StartStaminaRegenDelay();
-	}
-	else {
-		bAttacking = false;
-		return;
-	}
-	if (!bAttacking) {
-		CurrentAttackData = Data;
-		AnimInstance->PlayMontage(Data.AttackMontages);
-		bAttacking = true;
-	}
-}
-
-void AThirdPersonCharacter::EnableComboWindow() {
-	bEnemyHitDuringAttack = false;
-	bWantsToCombo = false;
-}
-
-void AThirdPersonCharacter::DisableComboWindow(){
-	if (!bWantsToCombo) {
-		AnimInstance->StopMontage(CurrentAttackData.AttackMontages);
-		ResetAttackState();
-	}
-}
-
-void AThirdPersonCharacter::EnableWeaponHurtBox() {
 	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
 	if (CurrWeapon) {
-		CurrWeapon->EnableHurtBox();
+		CurrWeapon->AttackCombo(CurrWeapon->GetLightAttackData());
 	}
-}
-
-void AThirdPersonCharacter::DisableWeaponHurtBox() {
-	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
-	if (CurrWeapon) {
-		CurrWeapon->DisableHurtBox();
-	}
-}
-
-void AThirdPersonCharacter::ResetAttackState(){
-	//UE_LOG(LogTemp, Warning, TEXT("In ResetAttackState"));
-	bWantsToCombo = false;
-	bAttacking = false;
-	bEnemyHitDuringAttack = false;
-	CurrentAttackIndex = 0;
-	CurrentAttackData = FAttackData();
-}
-
-// needed for last hit to ensure it hits and does correct amount of damage.
-void AThirdPersonCharacter::LastHit() {
-	bEnemyHitDuringAttack = false;
-	bWantsToCombo = false;
 }
 
 void AThirdPersonCharacter::StartStaminaRegenDelay(){

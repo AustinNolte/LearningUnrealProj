@@ -11,6 +11,7 @@
 
 class ACharacter;
 class AThirdPersonCharacter;
+class UMeleePlayerAnimInstance;
 class AMeleeEnemy;
 
 UENUM(BLueprintType)
@@ -85,6 +86,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	bool bIsEnemyWeapon = false;
 
+	/* Anim Instance of the owner if player owner */
+	UMeleePlayerAnimInstance* AnimInstance; 
+
 protected:
 
 	AMeleeWeapon();
@@ -99,17 +103,49 @@ public:
 	AThirdPersonCharacter* PlayerOwner = nullptr;
 	AMeleeEnemy* EnemyOwner = nullptr;
 
-	FORCEINLINE void SetPlayerOwner(AThirdPersonCharacter* Player) { PlayerOwner = Player; }
+	FORCEINLINE void SetPlayerOwner(AThirdPersonCharacter* Player, UMeleePlayerAnimInstance* AnimInst) { PlayerOwner = Player; AnimInstance = AnimInst; }
 	FORCEINLINE void SetEnemyOwner(AMeleeEnemy* Enemy) { EnemyOwner = Enemy; }
+
+	/* --------------------- Attack Logic -------------------------------- */
+	bool bWantsToCombo = false;
+	bool bAttacking = false;
+	bool bEnemyHitDuringAttack = false;
+
+	FORCEINLINE void EnableEnemyHitDuringAttack() { bEnemyHitDuringAttack = true; }
+
+	int CurrentAttackIndex = 0;
+
+	int GetCurrentAttackIndex();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	/* For anim notifies to be called from OwnerCharacter */
+	/* Handler for Anim Notify in blueprints */
+	UFUNCTION(BlueprintCallable)
 	void EnableHurtBox();
 	
-	/* For anim notifies to be called from OwnerCharacter */
+	/* Handler for Anim Notify in blueprints */
+	UFUNCTION(BlueprintCallable)
 	void DisableHurtBox();
+
+	void AttackCombo(FAttackData Data);
+	FAttackData CurrentAttackData;
+
+	/* Handler for Anim Notify in blueprints */
+	UFUNCTION(BlueprintCallable)
+	void DisableComboWindow();
+
+	/* Handler for Anim Notify in blueprints */
+	UFUNCTION(BlueprintCallable)
+	void EnableComboWindow();
+
+	/* Handler for Anim Noitfy in blueprints*/
+	UFUNCTION(BlueprintCallable)
+	void ResetAttackState();
+
+	/* Handler for Anim Notify in blueprints*/
+	UFUNCTION(BlueprintCallable)
+	void LastHit();
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

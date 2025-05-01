@@ -152,56 +152,19 @@ protected:
 	virtual void SpecialAttack(const FInputActionValue& Value);
 
 public:
-
-
-	bool bWantsToCombo = false;
-	bool bAttacking = false;
-	bool bEnemyHitDuringAttack = false;
-
-	FORCEINLINE void EnableEnemyHitDuringAttack() { bEnemyHitDuringAttack = true; }
-
-	int CurrentAttackIndex = 0;
-
-	int GetCurrentAttackIndex();
-
+	
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	void AttackCombo(FAttackData Data);
-	FAttackData CurrentAttackData;
-
-	/* Handler for Anim Notify in blueprints */
-	UFUNCTION(BlueprintCallable)
-	void DisableComboWindow();
-
-	/* Handler for Anim Notify in blueprints */
-	UFUNCTION(BlueprintCallable)
-	void EnableComboWindow();
-
-	/* Handler for Anim Notify in blueprints */
-	UFUNCTION(BlueprintCallable)
-	void EnableWeaponHurtBox();
-
-	/* Handler for Anim Notify in blueprints */
-	UFUNCTION(BlueprintCallable)
-	void DisableWeaponHurtBox();
-	 
-	/* Handler for Anim Noitfy in blueprints*/
-	UFUNCTION(BlueprintCallable)
-	void ResetAttackState();
-	
-	/* Handler for Anim Notify in blueprints*/
-	UFUNCTION(BlueprintCallable)
-	void LastHit();
+	void StartStaminaRegenDelay();
+	void StartHelathRegenDelay();
 
 private:
 	
 
 
-	void StartStaminaRegenDelay();
-	void StartHelathRegenDelay();
 
 	bool bRegenStamina = false;
 	bool bRegenHealth = false;
