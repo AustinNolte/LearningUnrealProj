@@ -4,12 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "GameFramework/Character.h"
 #include "MeleePlayerAnimInstance.generated.h"
 
-class AThirdPersonCharacter;
+class ACharacter;
 class UCharacterMovementComponent;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMontageNotifyEvent, FName, NotifyName);
 
 UCLASS()
 class LEARNINGUNREALPROJ_API UMeleePlayerAnimInstance : public UAnimInstance{
@@ -20,27 +19,15 @@ public:
 
 	/* Owner of the AnimInstance */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Actor Animating")
-	AThirdPersonCharacter* Player;
+	ACharacter* Character;
 
 	/* Owner of the AnimInstance's character movement for faster referencing */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Actor Animating")
-	UCharacterMovementComponent* PlayerMovementComp;
+	UCharacterMovementComponent* CharacterMovementComp;
 
 	/* Speed of the player */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Locomotion")
 	float Speed;
-
-	/* Controls whether or not to play falling animations */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Locomotion")
-	bool bIsFalling = false;
-
-	/* Controls whether or not to play jumping animations */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Locomotion")
-	bool bIsJumping = false;
-
-	// Broadcast this when a notify fires
-	UPROPERTY(BlueprintAssignable, Category = "Animation Notifies")
-	FMontageNotifyEvent OnNotifyBegin;
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 

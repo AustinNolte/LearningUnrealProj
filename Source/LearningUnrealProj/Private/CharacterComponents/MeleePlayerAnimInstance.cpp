@@ -5,12 +5,9 @@ void UMeleePlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds){
 
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (!Player) return;
+	if (!Character) return;
 
-	Speed = Player->GetVelocity().Size();
-
-	bIsFalling = PlayerMovementComp->IsFalling();
-	bIsJumping = Player->IsJumpProvidingForce();
+	Speed = Character->GetVelocity().Size();
 }
 
 void UMeleePlayerAnimInstance::NativeInitializeAnimation(){
@@ -19,15 +16,15 @@ void UMeleePlayerAnimInstance::NativeInitializeAnimation(){
 	// cancel if no player owns
 	if (!(TryGetPawnOwner())) return;
 
-	Player = Cast<AThirdPersonCharacter>(TryGetPawnOwner());
+	Character = Cast<ACharacter>(TryGetPawnOwner());
 
-	// cancel if player is not set 
-	if (!Player) return;
+	// cancel if owner is not set 
+	if (!Character) return;
 
-	PlayerMovementComp = Cast<UCharacterMovementComponent>(Player->GetMovementComponent());
+	CharacterMovementComp = Cast<UCharacterMovementComponent>(Character->GetMovementComponent());
 
 	// cancel if PlayerMovementComp is not set
-	if (!PlayerMovementComp) return;
+	if (!CharacterMovementComp) return;
 }
 
 void UMeleePlayerAnimInstance::PlayMontage(UAnimMontage* Montage) {

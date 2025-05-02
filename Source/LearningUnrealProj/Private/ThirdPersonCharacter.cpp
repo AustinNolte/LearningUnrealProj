@@ -95,9 +95,6 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	// Setup action bindings
 	if (UEnhancedInputComponent* EnhancedIC = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 
-		// Jump input
-		EnhancedIC->BindAction(JumpAction, ETriggerEvent::Started, this, &AThirdPersonCharacter::Jump);
-		EnhancedIC->BindAction(JumpAction, ETriggerEvent::Completed, this, &AThirdPersonCharacter::StopJumping);
 
 		// Move Input
 		EnhancedIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Move);
@@ -110,15 +107,9 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		
 		// LightAttackAction Input
 		EnhancedIC->BindAction(LightAttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::LightAttack);
-
-		// MediumAttackAction Input
-		EnhancedIC->BindAction(MediumAttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::MediumAttack);
-
+		
 		// HeavyAttackAction Input
 		EnhancedIC->BindAction(HeavyAttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::HeavyAttack);
-
-		// SpecialAttackAction Input
-		EnhancedIC->BindAction(SpecialAttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::SpecialAttack);
 	}
 }
 
@@ -187,24 +178,22 @@ void AThirdPersonCharacter::LightAttack(const FInputActionValue& Value){
 	}
 }
 
-void AThirdPersonCharacter::MediumAttack(const FInputActionValue& Value) {
-	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
-	if (CurrWeapon) {
-		CurrWeapon->AttackCombo(CurrWeapon->GetLightAttackData());
-	}
-}
 
 void AThirdPersonCharacter::HeavyAttack(const FInputActionValue& Value) {
 	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
 	if (CurrWeapon) {
-		CurrWeapon->AttackCombo(CurrWeapon->GetLightAttackData());
+		CurrWeapon->AttackCombo(CurrWeapon->GetHeavyAttackData());
 	}
 }
 
-void AThirdPersonCharacter::SpecialAttack(const FInputActionValue& Value) {
+
+AMeleeWeapon* AThirdPersonCharacter::GetWeapon(){
 	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
 	if (CurrWeapon) {
-		CurrWeapon->AttackCombo(CurrWeapon->GetLightAttackData());
+		return CurrWeapon;
+	}
+	else{
+		return nullptr;
 	}
 }
 

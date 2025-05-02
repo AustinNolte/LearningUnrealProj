@@ -115,7 +115,7 @@ void AMeleeWeapon::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 			if (!(bEnemyHitDuringAttack)) {
 				EnableEnemyHitDuringAttack();
 				UE_LOG(LogTemp, Warning, TEXT("CurrentAttackIndex: %d"), GetCurrentAttackIndex());
-				float Damage = LightAttack.DamagePerAttack[GetCurrentAttackIndex()];
+				float Damage = CurrentAttackData.DamagePerAttack[GetCurrentAttackIndex()];
 				UE_LOG(LogTemp, Error, TEXT("Damage: %f"), Damage);
 				UGameplayStatics::ApplyDamage(EnemyHit, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
 			}

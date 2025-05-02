@@ -18,9 +18,7 @@ UENUM(BLueprintType)
 enum class EAttackType : uint8 {
 
 	Light		UMETA(DisplayName = "Light"),
-	Medium		UMETA(DisplayName = "Medium"),
 	Heavy		UMETA(DisplayName = "Heavy"),
-	Special		UMETA(DisplayName = "Special")
 
 };
 
@@ -58,17 +56,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
 	FAttackData LightAttack = { nullptr, {}, {}, EAttackType::Light };
 
-	/* Medium Attack Data */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
-	FAttackData MediumAttack = { nullptr, {}, {}, EAttackType::Medium };
 
 	/* Heavy Attack Data */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
 	FAttackData HeavyAttack = { nullptr, {}, {}, EAttackType::Heavy };
-
-	/* Special Attack Data */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attacks")
-	FAttackData SpecialAttack = { nullptr, {}, {}, EAttackType::Special };
 
 	/* Owner of this component for faster referencing */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Parent")
@@ -152,7 +143,5 @@ public:
 
 
 	FORCEINLINE FAttackData GetLightAttackData() const { return LightAttack; }
-	FORCEINLINE FAttackData GetMediumAttackData() const { return MediumAttack; }
 	FORCEINLINE FAttackData GetHeavyAttackData() const { return HeavyAttack; }
-	FORCEINLINE FAttackData GetSpecialAttackData() const { return SpecialAttack; }
 };

@@ -72,10 +72,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
 
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
@@ -88,18 +84,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	UInputAction* LightAttackAction;
 
-	/* MediumAttack InputAction */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	UInputAction* MediumAttackAction;
-
 	/* HeavyAttack InputAction */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	UInputAction* HeavyAttackAction;
-
-	/* SpecialAttack InputAction */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	UInputAction* SpecialAttackAction;
-
 
 	/** Interact Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -142,14 +129,9 @@ protected:
 	/* For Light Attacks */
 	virtual void LightAttack(const FInputActionValue& Value);
 
-	/* For Medium Attacks */
-	virtual void MediumAttack(const FInputActionValue& Value);
-
 	/* For Heavy Attacks */
 	virtual void HeavyAttack(const FInputActionValue& Value);
 
-	/* For Special Attacks */
-	virtual void SpecialAttack(const FInputActionValue& Value);
 
 public:
 	
@@ -157,6 +139,10 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	/* Returns weapon */
+	UFUNCTION(BlueprintCallable)
+	AMeleeWeapon* GetWeapon();
 
 	void StartStaminaRegenDelay();
 	void StartHelathRegenDelay();
