@@ -95,7 +95,7 @@ public:
 	AMeleeEnemy* EnemyOwner = nullptr;
 
 	FORCEINLINE void SetPlayerOwner(AThirdPersonCharacter* Player, UMeleePlayerAnimInstance* AnimInst) { PlayerOwner = Player; AnimInstance = AnimInst; }
-	FORCEINLINE void SetEnemyOwner(AMeleeEnemy* Enemy) { EnemyOwner = Enemy; }
+	FORCEINLINE void SetEnemyOwner(AMeleeEnemy* Enemy, UMeleePlayerAnimInstance* AnimInst) { EnemyOwner = Enemy; AnimInstance = AnimInst; }
 
 	/* --------------------- Attack Logic -------------------------------- */
 	bool bWantsToCombo = false;

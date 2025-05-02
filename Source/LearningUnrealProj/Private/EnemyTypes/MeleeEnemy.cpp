@@ -1,36 +1,51 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+#include "MeleeWeapon.h"
 #include "EnemyTypes/MeleeEnemy.h"
+
 
 AMeleeEnemy::AMeleeEnemy() {
 
-	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("WeaponComponent"));
 
 	// Attach to mesh at socket
 	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
-
-	HurtBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HurtBox"));
-	HurtBox->SetupAttachment(Weapon);
 
 }
 
 void AMeleeEnemy::BeginPlay(){
 	Super::BeginPlay();
 
-	// Collision for weapon should only be set when swinging
-	HurtBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AnimInstance = Cast<UMeleePlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (!AnimInstance) return;
+
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		CurrWeapon->SetEnemyOwner(this, AnimInstance);
+	}
 
 }
 
-void AMeleeEnemy::EnableHurtBoxCollision() {
-
-	HurtBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+AMeleeWeapon* AMeleeEnemy::GetWeapon(){
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		return CurrWeapon;
+	}
+	else {
+		return nullptr;
+	}
 }
 
-void AMeleeEnemy::DisableHurtBoxCollision() {
+void AMeleeEnemy::LightAttack(){
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		CurrWeapon->AttackCombo(CurrWeapon->GetLightAttackData());
+	}
+}
 
-	HurtBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+void AMeleeEnemy::HeavyAttack(){
+	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+	if (CurrWeapon) {
+		CurrWeapon->AttackCombo(CurrWeapon->GetHeavyAttackData());
+	}
 }
 
 void AMeleeEnemy::Tick(float DeltaTime){

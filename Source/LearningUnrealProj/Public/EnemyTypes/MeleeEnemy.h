@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "BasicEnemy.h"
-#include "Components/BoxComponent.h"
-#include "Components/SkeletalMeshComponent.h"
+#include "CharacterComponents/MeleePlayerAnimInstance.h"
 #include "MeleeEnemy.generated.h"
+
+class AMeleeWeapon;
+class UChildActorComponent;
+class UMeleePlayerAnimInstnace;
 
 UCLASS()
 class LEARNINGUNREALPROJ_API AMeleeEnemy : public ABasicEnemy{
@@ -14,27 +17,33 @@ class LEARNINGUNREALPROJ_API AMeleeEnemy : public ABasicEnemy{
 	GENERATED_BODY() 
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	USkeletalMeshComponent* Weapon;
 
-	/* Hurt Box of the weapon */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HurtBox")
-	UBoxComponent* HurtBox;
+	/* Weapon of character */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowAbstract = false, AllowedClasses = "AMeleeWeapon"))
+	UChildActorComponent* Weapon;
 
-	bool bCanCombo = true;
+	/* Animation instance for faster referecning*/
+	UMeleePlayerAnimInstance* AnimInstance;
+	
+protected:
 
-	FORCEINLINE void ToggleCanCombo() { bCanCombo = !bCanCombo; }
+	void Tick(float DeltaTime);
+	
+public:
+
+	/* Returns weapon */
+	UFUNCTION(BlueprintCallable)
+	AMeleeWeapon* GetWeapon();
 
 	AMeleeEnemy();
 
 	void BeginPlay();
 
-	void EnableHurtBoxCollision();
+	/* For Light Attacks */
+	UFUNCTION(BlueprintCallable)
+	void LightAttack();
 
-	void DisableHurtBoxCollision();
-
-protected:
-
-	void Tick(float DeltaTime);
-	
+	/* For Heavy Attacks */
+	UFUNCTION(BlueprintCallable)
+	void HeavyAttack();
 };

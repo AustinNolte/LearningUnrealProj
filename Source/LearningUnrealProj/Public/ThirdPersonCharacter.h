@@ -149,9 +149,6 @@ public:
 
 private:
 	
-
-
-
 	bool bRegenStamina = false;
 	bool bRegenHealth = false;
 

@@ -172,6 +172,7 @@ void AThirdPersonCharacter::Interact(const FInputActionValue& Value) {
 */
 
 void AThirdPersonCharacter::LightAttack(const FInputActionValue& Value){
+	UE_LOG(LogTemp, Warning, TEXT("Here in Lightattack"));
 	AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
 	if (CurrWeapon) {
 		CurrWeapon->AttackCombo(CurrWeapon->GetLightAttackData());
