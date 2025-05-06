@@ -2,6 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Engine/Canvas.h"
+#include "Math/Vector4.h"
+
 
 #include "HUDComponents/Widgets/HealthBarWidget.h"
 #include "HUDComponents/Widgets/StaminaBarWidget.h" 
@@ -15,6 +18,7 @@
 class UHealthBarWidget;
 class UStaminaBarWidget;
 class UAmmoAndWeaponDisplay;
+class UCanvas;
 class AWeapon;
 
 UCLASS()
@@ -39,6 +43,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UAmmoAndWeaponDisplay* AmmoAndWeaponDisplay;
+
 
 
 public:

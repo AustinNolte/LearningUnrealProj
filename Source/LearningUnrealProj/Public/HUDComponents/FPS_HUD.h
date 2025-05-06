@@ -26,6 +26,23 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UMainCanvas> MainGameUIClass;
 
+	/* Crosshair gap in pixels default: 50pixels */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CrosshairGap = 5;
+
+	/* Crosshair len in pixels, default: 200pixels */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CrosshairLen = 10;
+
+	/* Crosshair Thickness in pixels, default: 20pixels*/
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float CrosshairThickness = 1;
+
+	/* Crosshair color, Vector of (R,G,B,A) with A being Alpha (Opacity), Default white */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "255.0"))
+	FVector4 RGBColor = FVector4(255.0f, 255.0f, 255.0f, 255.0f);
+
+
 	/*------------- Health Bar Section ---------------- */
 
 	/* Takes percent of health left (CurrentHealth/MAX_HEALTH) */
@@ -52,6 +69,15 @@ public:
 
 	/* Changes weapon, this includes weapon icon and ammo count etc */
 	void ChangeWeapon(AWeapon* NewWeapon);
+
+	/*------------- Crosshair Section ---------------- */
+	
+	void DrawCrosshair();
+	
+	void DrawCircleCrosshair();
+	
+	void DrawDotCrosshair();
+
 
 private:
 	UMainCanvas* MainGameCanvas;

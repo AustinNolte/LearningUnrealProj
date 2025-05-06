@@ -141,7 +141,6 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 
 		FCollisionQueryParams CollisionParams;
 
-
 		FHitResult OutHit;
 		if (GetWorld()->LineTraceSingleByChannel(OutHit, camLoc, endPoint, ECC_Pawn, CollisionParams)){
 			//UE_LOG(LogTemp, Warning, TEXT("Hit at Location: %s"), *OutHit.Location.ToString());
@@ -157,8 +156,6 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 				HUD->UpdateAmmo(equippedWeapon->CurrentAmmo, equippedWeapon->MAX_AMMO);
 			}
 		}
-
-
 
 		if (AnimationInstance){
 			AnimationInstance->PlayFireMontage();

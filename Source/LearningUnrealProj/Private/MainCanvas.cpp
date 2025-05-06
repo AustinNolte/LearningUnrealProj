@@ -41,3 +41,6 @@ void UMainCanvas::ResetAmmo(int32 MAX_AMMO){
 void UMainCanvas::ChangeWeapon(AWeapon* NewWeapon){
 	AmmoAndWeaponDisplay->ChangeWeapon(NewWeapon);
 }
+
+/* Crosshair section */
+
