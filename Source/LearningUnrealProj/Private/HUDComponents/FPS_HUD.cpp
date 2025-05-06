@@ -57,3 +57,17 @@ void AFPS_HUD::ResetStamina() {
 		MainGameCanvas->ResetStamina();
 	}
 }
+
+/*------------- Ammo and Display Section ---------------- */
+
+void AFPS_HUD::UpdateAmmo(int32 CurrAmmo, int32 MAX_AMMO) {
+	MainGameCanvas->UpdateAmmo(CurrAmmo, MAX_AMMO);
+}
+
+void AFPS_HUD::ResetAmmo(int32 MAX_AMMO) {
+	MainGameCanvas->ResetAmmo(MAX_AMMO);
+}
+
+void AFPS_HUD::ChangeWeapon(AWeapon* NewWeapon) {
+	MainGameCanvas->ChangeWeapon(NewWeapon);
+}

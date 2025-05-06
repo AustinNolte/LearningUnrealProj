@@ -150,7 +150,15 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 
 		FVector3d shotDirection =  endPoint - equippedWeapon->GetSkeleton()->GetSocketLocation("ProjectileSpawn");
 		shotDirection.Normalize();
-		equippedWeapon->Fire(shotDirection);
+		if(equippedWeapon->Fire(shotDirection)){
+		
+			AFPS_HUD* HUD = GetHud();
+			if (HUD) {
+				HUD->UpdateAmmo(equippedWeapon->CurrentAmmo, equippedWeapon->MAX_AMMO);
+			}
+		}
+
+
 
 		if (AnimationInstance){
 			AnimationInstance->PlayFireMontage();
@@ -249,6 +257,10 @@ void AFirstPersonCharacter::equipWeapon(AWeapon* weapon) {
 		AnimationInstance->setbHoldingWeapon(HasWeapon);
 	}
 	OnWeaponChanged.Broadcast(equippedWeapon);
+	AFPS_HUD* HUD = GetHud();
+	if (HUD) {
+		HUD->ChangeWeapon(equippedWeapon);
+	}
 }
 
 void AFirstPersonCharacter::Tick(float DeltaTime) {

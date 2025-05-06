@@ -27,3 +27,17 @@ void UMainCanvas::UpdateStamina(float Value){
 void UMainCanvas::ResetStamina(){
 	StaminaBarWidget->ResetStamina();
 }
+
+/*------------- Ammo and Weapon Section ---------------- */
+
+void UMainCanvas::UpdateAmmo(int32 CurrAmmo, int32 MAX_AMMO){
+	AmmoAndWeaponDisplay->UpdateAmmo(CurrAmmo, MAX_AMMO);
+}
+
+void UMainCanvas::ResetAmmo(int32 MAX_AMMO){
+	AmmoAndWeaponDisplay->ResetAmmo(MAX_AMMO);
+}
+
+void UMainCanvas::ChangeWeapon(AWeapon* NewWeapon){
+	AmmoAndWeaponDisplay->ChangeWeapon(NewWeapon);
+}

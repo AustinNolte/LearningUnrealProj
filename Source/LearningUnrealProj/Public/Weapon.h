@@ -43,7 +43,7 @@ public:
 
 	/* Max Ammo of the weapon */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
-	int32 MaxAmmo = 30;
+	int32 MAX_AMMO = 30;
 
 	/* Current Ammo in the clip */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
@@ -66,7 +66,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Fire(FVector3d direction);
+	virtual bool Fire(FVector3d direction);
 
 protected:
 	// Called when the game starts or when spawned
