@@ -184,22 +184,43 @@ void AFirstPersonCharacter::ReloadWeapon(const FInputActionValue& Value){
 	if (equippedWeapon) {
 		equippedWeapon->Reload();
 	}
-
-	// TODO: Put in reload animation
 }
 
 void AFirstPersonCharacter::StartSprint(const FInputActionValue& Value){
-	bIsSprinting = true;
+	if (Stamina > 0) {
+		bIsSprinting = true;
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed; 
+		StartStaminaRegenDelay();
+	}
 
-	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	//GetCharacterMovement()->MaxAcceleration = SprintAccelerationSpeed;
 }
 
 void AFirstPersonCharacter::StopSprint(const FInputActionValue& Value) {
-	bIsSprinting = false;
+	if (bIsSprinting) {
+		bIsSprinting = false;
+		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
+	}
+}
 
-	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
-	//GetCharacterMovement()->MaxAcceleration = WalkingAccelerationSpeed;
+void AFirstPersonCharacter::StartStaminaRegenDelay() {
+	GetWorld()->GetTimerManager().SetTimer(
+		StaminaRegenTimer,
+		this,
+		&AFirstPersonCharacter::EnableStaminaRegen,
+		StaminaRegenDelay,   // Delay in seconds
+		false   // Don't loop
+	);
+	UE_LOG(LogTemp, Warning, TEXT("Stamina Regen Set: %f"), Stamina);
+}
+
+void AFirstPersonCharacter::StartHelathRegenDelay() {
+	GetWorld()->GetTimerManager().SetTimer(
+		HealthRegenTimer,
+		this,
+		&AFirstPersonCharacter::EnableHealthRegen,
+		HealthRegenDelay,   // Delay in seconds
+		false   // Don't loop
+	);
 }
 
 //** ------------------------ INVENTORY SECTION ------------------------ **/
@@ -242,4 +263,63 @@ void AFirstPersonCharacter::Tick(float DeltaTime) {
 			canFire = true;
 		}
 	}
+
+	// will lose stamina 1.5x faster than regenerated 
+	if (bIsSprinting) {
+		Stamina -= (StaminaRegenRate * 1.5f) * DeltaTime;
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->UpdateStamina(Stamina / MAX_STAMINA);
+		}
+	}
+
+	if (bRegenHealth) {
+		Health = Health + (HealthRegenRate * DeltaTime);
+
+		AFPS_HUD* HUD = GetHud();
+
+		if (HUD) {
+			HUD->UpdateHealth(Health / MAX_HEALTH);
+		}
+
+		if (Health > MAX_HEALTH) {
+			Health = MAX_HEALTH;
+			bRegenHealth = false;
+
+			HUD->UpdateHealth(Health / MAX_HEALTH);
+
+		}
+	}
+	if (bRegenStamina) {
+		Stamina = Stamina + (StaminaRegenRate * DeltaTime);
+		AFPS_HUD* HUD = GetHud();
+		
+		if (HUD) {
+			HUD->UpdateStamina(Stamina / MAX_STAMINA);
+		}
+
+		if (Stamina > MAX_STAMINA) {
+			Stamina = MAX_STAMINA;
+			bRegenStamina = false;
+
+			HUD->UpdateStamina(Stamina / MAX_STAMINA);
+
+		}
+	}
 } 
+
+
+/* Helper Functions */
+
+/* Returns HUD already casted to correct type */
+AFPS_HUD* AFirstPersonCharacter::GetHud(){
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC && PC->GetHUD()) {
+		AFPS_HUD* HUD = Cast<AFPS_HUD>(PC->GetHUD());
+		if (HUD){
+			return HUD;
+		}
+	}
+	return nullptr;
+}

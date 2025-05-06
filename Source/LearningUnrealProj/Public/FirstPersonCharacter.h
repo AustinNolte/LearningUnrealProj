@@ -15,7 +15,9 @@
 #include "Weapon.h"
 #include "Interactable.h"
 #include "CharacterComponents/PlayerAnimInstance.h"
+#include "HUDComponents/FPS_HUD.h"
 #include "FirstPersonCharacter.generated.h"
+
 
 class UInputComponent;
 class UInputMappingContext;
@@ -26,6 +28,7 @@ class UCameraComponent;
 class UInventoryManager; 
 class UPlayerAnimInstance;
 class AWeapon;
+class AFPS_HUD;
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponAdded, AWeapon*, Weapon);
@@ -102,6 +105,38 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
 	float SprintAccelerationSpeed = 3072.0f;
 
+	/* Health of Player default 500 set from MAX_HEALTH */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float Health;
+
+	/* Health Regen Rate: Regeneration per second */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float HealthRegenRate = 5;
+
+	/* Default 500 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float MAX_HEALTH = 500;
+
+	/* Default RegenDelay of Health in seconds */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float HealthRegenDelay = 5.0f;
+
+	/* Stamina of Player default 100 set from MAX_STAMINA */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float Stamina;
+
+	/* Stamina Regen Rate: Regeneration Per second */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float StaminaRegenRate = 5;
+
+	/* Max Stamina Default 100 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float MAX_STAMINA = 100;
+
+	/* Default RegenDelay of Health in seconds */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float StaminaRegenDelay = 5.0f;
+
 protected:
 
 	/** ------------------------ INPUT SECTION ------------------------ **/
@@ -174,9 +209,25 @@ public:
 
 	virtual void BeginPlay() override;
 
+	void StartStaminaRegenDelay();
+	void StartHelathRegenDelay();
+
 private:
 	/** ------------------------ WEAPON FIRERATE HANDLING ------------------------ **/
 	bool canFire = true;
 
 	float timeSinceLastFire = 0.0f;
+
+	bool bRegenStamina = false;
+	bool bRegenHealth = false;
+
+	FORCEINLINE void EnableStaminaRegen() { bRegenStamina = true; }
+	FORCEINLINE void EnableHealthRegen() { bRegenHealth = true; }
+
+
+	FTimerHandle HealthRegenTimer;
+	FTimerHandle StaminaRegenTimer;
+
+	/* Helper functions */
+	AFPS_HUD* GetHud();
 };
