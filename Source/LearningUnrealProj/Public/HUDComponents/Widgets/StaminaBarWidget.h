@@ -7,12 +7,8 @@
 #include "Components/ProgressBar.h"
 #include "StaminaBarWidget.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class LEARNINGUNREALPROJ_API UStaminaBarWidget : public UUserWidget
-{
+class LEARNINGUNREALPROJ_API UStaminaBarWidget : public UUserWidget{
 	GENERATED_BODY()
 
 public:

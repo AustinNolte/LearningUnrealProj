@@ -2,10 +2,12 @@
 
 AFPS_HUD::AFPS_HUD(){}
 
+
+
 void AFPS_HUD::DrawHUD(){
 	Super::DrawHUD();
 
-	DrawCrosshair();
+	//DrawCrosshair();
 	
 }
 
@@ -17,6 +19,24 @@ void AFPS_HUD::BeginPlay(){
 		MainGameCanvas = CreateWidget<UMainCanvas>(GetWorld(), MainGameUIClass);
 		if (MainGameCanvas) {
 			MainGameCanvas->AddToViewport();
+
+			// from manual tweaking, This is too allow for ease of setting. Simpler to image crosshair thickness of 10 rather than .1
+			CrosshairThickness *= 0.01;
+			SetCrosshairThickness(CrosshairThickness);
+		
+			// same as thickness
+			CrosshairGap *= 0.1;
+			SetCrosshairGap(CrosshairGap);
+			
+			// same as thickness
+			CrosshairLen *= 0.1;
+			SetCrosshairLen(CrosshairLen);
+			
+			// color has to be normalized
+			FLinearColor Color = FLinearColor(RGBColor / 255.0f);
+			SetCrosshairColor(Color);
+			
+			SetCrosshairType(Type);
 		}
 	}
 }
@@ -118,4 +138,26 @@ void AFPS_HUD::DrawCrosshair() {
 		// bottom line
 		DrawLine(CenterX, BottomLineStart, CenterX, BottomLineEnd, Color, CrosshairThickness);
 	} 
+}
+
+/*------------ Crosshair Section -------------------------*/
+
+void AFPS_HUD::SetCrosshairThickness(float Value) {
+	MainGameCanvas->SetCrosshairThickness(Value);
+}
+
+void AFPS_HUD::SetCrosshairGap(float Value) {
+	MainGameCanvas->SetCrosshairGap(Value);
+}
+
+void AFPS_HUD::SetCrosshairLen(float Value) {
+	MainGameCanvas->SetCrosshairLen(Value);
+}
+
+void AFPS_HUD::SetCrosshairColor(FLinearColor Color) {
+	MainGameCanvas->SetCrosshairColor(Color);
+}
+
+void AFPS_HUD::SetCrosshairType(ECrossHairType CrosshairType) {
+	MainGameCanvas->SetCrosshairType(CrosshairType);
 }

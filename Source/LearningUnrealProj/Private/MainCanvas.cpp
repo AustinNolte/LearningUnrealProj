@@ -42,5 +42,26 @@ void UMainCanvas::ChangeWeapon(AWeapon* NewWeapon){
 	AmmoAndWeaponDisplay->ChangeWeapon(NewWeapon);
 }
 
-/* Crosshair section */
+/*------------ Crosshair Section -------------------------*/
+
+void UMainCanvas::SetCrosshairThickness(float Value){
+	CrosshairComponent->SetCrosshairThickness(Value);
+}
+
+void UMainCanvas::SetCrosshairGap(float Value){
+	CrosshairComponent->SetCrosshairGap(Value);
+}
+
+void UMainCanvas::SetCrosshairLen(float Value){
+	CrosshairComponent->SetCrosshairLen(Value);
+}
+
+void UMainCanvas::SetCrosshairColor(FLinearColor Color){
+	CrosshairComponent->SetCrosshairColor(Color);
+}
+
+void UMainCanvas::SetCrosshairType(ECrossHairType CrosshairType){
+	CrosshairComponent->SetCrosshairType(CrosshairType);
+}
+
 

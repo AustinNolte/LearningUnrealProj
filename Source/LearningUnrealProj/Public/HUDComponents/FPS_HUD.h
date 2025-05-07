@@ -5,6 +5,9 @@
 
 #include "MainCanvas.h"
 
+// for enum type
+#include "HUDComponents/Widgets/CrosshairComponent.h"
+
 #include "FPS_HUD.generated.h"
 
 class UMainCanvas;
@@ -26,21 +29,25 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UMainCanvas> MainGameUIClass;
 
-	/* Crosshair gap in pixels default: 50pixels */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CrosshairGap = 5;
+	/* Crosshair gap*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin ="0.0", ClampMax = "10.0"))
+	float CrosshairGap = 1;
 
-	/* Crosshair len in pixels, default: 200pixels */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CrosshairLen = 10;
+	/* Crosshair len */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "10.0"))
+	float CrosshairLen = 1;
 
-	/* Crosshair Thickness in pixels, default: 20pixels*/
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	/* Crosshair Thickness*/
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "10.0"))
 	float CrosshairThickness = 1;
 
 	/* Crosshair color, Vector of (R,G,B,A) with A being Alpha (Opacity), Default white */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "255.0"))
-	FVector4 RGBColor = FVector4(255.0f, 255.0f, 255.0f, 255.0f);
+	FVector4 RGBColor = FVector4(255.0f, 255.0f, 255.0f, 255.0f); 
+
+	/* Crosshair Type cross by default */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	ECrossHairType Type = ECrossHairType::Cross;
 
 
 	/*------------- Health Bar Section ---------------- */
@@ -78,6 +85,22 @@ public:
 	
 	void DrawDotCrosshair();
 
+	/*------------ Crosshair Section -------------------------*/
+
+	/* Crosshair thickeness, in percent of screen space */
+	void SetCrosshairThickness(float Value);
+
+	/* Crosshair Gap, in percent of screen space */
+	void SetCrosshairGap(float Value);
+
+	/* CrosshairLen if crosshair type, in percent of screen space */
+	void SetCrosshairLen(float Value);
+
+	/* Color of crosshair in format of (R,G,B,A) */
+	void SetCrosshairColor(FLinearColor Color);
+
+	/* Set CrosshairType from enum of ECrossHairType */
+	void SetCrosshairType(ECrossHairType CrosshairType);
 
 private:
 	UMainCanvas* MainGameCanvas;

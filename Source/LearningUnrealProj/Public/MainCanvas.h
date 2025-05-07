@@ -9,6 +9,7 @@
 #include "HUDComponents/Widgets/HealthBarWidget.h"
 #include "HUDComponents/Widgets/StaminaBarWidget.h" 
 #include "HUDComponents/Widgets/AmmoAndWeaponDisplay.h"
+#include "HUDComponents/Widgets/CrosshairComponent.h"
 
 #include "Weapon.h"
 
@@ -44,6 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UAmmoAndWeaponDisplay* AmmoAndWeaponDisplay;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, meta = (BindWidget))
+	UCrosshairComponent* CrosshairComponent;
+
 
 
 public:
@@ -76,4 +80,21 @@ public:
 
 	/* Changes weapon, this includes weapon icon and ammo count etc */
 	void ChangeWeapon(AWeapon* NewWeapon);
+
+	/*------------ Crosshair Section -------------------------*/
+	
+	/* Crosshair thickeness, in percent of screen space */
+	void SetCrosshairThickness(float Value);
+
+	/* Crosshair Gap, in percent of screen space */
+	void SetCrosshairGap(float Value);
+
+	/* CrosshairLen if crosshair type, in percent of screen space */
+	void SetCrosshairLen(float Value);
+
+	/* Color of crosshair in format of (R,G,B,A) */
+	void SetCrosshairColor(FLinearColor Color);
+
+	/* Set CrosshairType from enum of ECrossHairType */
+	void SetCrosshairType(ECrossHairType CrosshairType);
 };
