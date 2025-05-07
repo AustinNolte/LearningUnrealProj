@@ -50,10 +50,6 @@ bool AWeapon::Fire(FVector3d direction) {
 		World->SpawnActor<AProjectile>(ProjectileClass, spawnLocation, spawnRotation, actorSpawnParams);
 
 		--CurrentAmmo;
-		UE_LOG(LogTemp, Warning, TEXT("Here in Weapon, Current AMMO: %d"), CurrentAmmo);
-		if (CurrentAmmo <= 0) {
-			Reload();
-		}
 		return true;
 	}
 	else {
@@ -79,6 +75,8 @@ void AWeapon::ReloadHelper() {
 
 	CurrentAmmo = MAX_AMMO;
 	bIsReloading = false;
+
+	OnReloadDone.Broadcast(MAX_AMMO);
 }
 
 

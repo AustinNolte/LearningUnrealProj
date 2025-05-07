@@ -12,41 +12,74 @@ void UCrosshairComponent::NativeConstruct(){
 
     if (CrosshairMaterial && CrosshairImage){
 
-        DynamicMaterial = UMaterialInstanceDynamic::Create(CrosshairMaterial, this);
-        CrosshairImage->SetBrushFromMaterial(DynamicMaterial);
+        CrosshairDynamicMaterial = UMaterialInstanceDynamic::Create(CrosshairMaterial, this);
+        CrosshairImage->SetBrushFromMaterial(CrosshairDynamicMaterial);
+    }
+
+    if (ReloadAnimationMaterial && ReloadAnimationImage) {
+
+        ReloadAnimationDynamicMaterial = UMaterialInstanceDynamic::Create(ReloadAnimationMaterial, this);
+        ReloadAnimationImage->SetBrushFromMaterial(ReloadAnimationDynamicMaterial);
+        
     }
 }
 
 void UCrosshairComponent::SetCrosshairThickness(float Value){
-    if (DynamicMaterial){
-
-        DynamicMaterial->SetScalarParameterValue("Thickness", Value);
+    if (CrosshairDynamicMaterial){
+        CrosshairDynamicMaterial->SetScalarParameterValue("Thickness", Value);
     }
-
 }
 
 void UCrosshairComponent::SetCrosshairGap(float Value){
-    if (DynamicMaterial) {
-
-        DynamicMaterial->SetScalarParameterValue("Gap", Value);
+    if (CrosshairDynamicMaterial) {
+        CrosshairDynamicMaterial->SetScalarParameterValue("Gap", Value);
     }
 }
 
 void UCrosshairComponent::SetCrosshairLen(float Value){
-    if (DynamicMaterial) {
+    if (CrosshairDynamicMaterial) {
+        CrosshairDynamicMaterial->SetScalarParameterValue("Length", Value);
+    }
+}
 
-        DynamicMaterial->SetScalarParameterValue("Length", Value);
+void UCrosshairComponent::SetCrosshairDotSize(float Value){
+    if (CrosshairDynamicMaterial) {
+        CrosshairDynamicMaterial->SetScalarParameterValue("DotSize", Value);
     }
 }
 
 void UCrosshairComponent::SetCrosshairColor(FLinearColor Color){
     FVector4 ColorVec = FVector4(Color.R, Color.G, Color.B, Color.A);
-    if (DynamicMaterial) {
 
-        DynamicMaterial->SetVectorParameterValue("Color", ColorVec);
+    if (CrosshairDynamicMaterial) {
+        CrosshairDynamicMaterial->SetVectorParameterValue("Color", ColorVec);
     }
 }
 
 void UCrosshairComponent::SetCrosshairType(ECrossHairType CrosshairType){
+    if (CrosshairDynamicMaterial) {
+        switch (CrosshairType) {
+            case ECrossHairType::Dot: CrosshairDynamicMaterial->SetScalarParameterValue("CrosshairType", 0); break;
+            case ECrossHairType::Circle: CrosshairDynamicMaterial->SetScalarParameterValue("CrosshairType", 1); break;
+            case ECrossHairType::Cross: CrosshairDynamicMaterial->SetScalarParameterValue("CrosshairType", 2); break;
+            default: CrosshairDynamicMaterial->SetScalarParameterValue("CrossahairType", 2); break; // default to cross as its the usual one most people expect
+        }
+    }
+}
 
+void UCrosshairComponent::SetReloadPercentage(float Value){
+    if (ReloadAnimationDynamicMaterial) {
+        ReloadAnimationDynamicMaterial->SetScalarParameterValue("Percent", Value);
+    }
+}
+
+void UCrosshairComponent::ToggleReloadVisibility() {
+    if (ReloadAnimationImage) {
+        if (ReloadAnimationImage->GetVisibility() == ESlateVisibility::Visible) {
+            ReloadAnimationImage->SetVisibility(ESlateVisibility::Hidden);
+        }
+        else if(ReloadAnimationImage->GetVisibility() == ESlateVisibility::Hidden) {
+            ReloadAnimationImage->SetVisibility(ESlateVisibility::Visible);
+        }
+    }
 }

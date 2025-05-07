@@ -4,6 +4,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Engine/Canvas.h"
 #include "Math/Vector4.h"
+#include "Components/Image.h"
 
 
 #include "HUDComponents/Widgets/HealthBarWidget.h"
@@ -20,6 +21,7 @@ class UHealthBarWidget;
 class UStaminaBarWidget;
 class UAmmoAndWeaponDisplay;
 class UCanvas;
+class UImage;
 class AWeapon;
 
 UCLASS()
@@ -47,6 +49,15 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, meta = (BindWidget))
 	UCrosshairComponent* CrosshairComponent;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, meta = (BindWidget))
+	UImage* AmmoAndWeaponDisplayBackground;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, meta = (BindWidget))
+	UImage* HealthBarWidgetBackground;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, meta = (BindWidget))
+	UImage* StaminaBarWidgetBackground;
 
 
 
@@ -81,6 +92,9 @@ public:
 	/* Changes weapon, this includes weapon icon and ammo count etc */
 	void ChangeWeapon(AWeapon* NewWeapon);
 
+	/* Toggles Visbility of Ammo and Weapon display */
+	void ToggleAmmoAndWeaponDisplay();
+
 	/*------------ Crosshair Section -------------------------*/
 	
 	/* Crosshair thickeness, in percent of screen space */
@@ -91,10 +105,19 @@ public:
 
 	/* CrosshairLen if crosshair type, in percent of screen space */
 	void SetCrosshairLen(float Value);
+	
+	/* Corsshair Dot size if crosshair type is dot */
+	void SetCrosshairDotSize(float Value);
 
 	/* Color of crosshair in format of (R,G,B,A) */
 	void SetCrosshairColor(FLinearColor Color);
 
 	/* Set CrosshairType from enum of ECrossHairType */
 	void SetCrosshairType(ECrossHairType CrosshairType);
+
+	/* Set Reload Animation Percentage, Value should be 0-1 */
+	void SetReloadPercentage(float Value);
+
+	/* Toggle Visibility of reload circle */
+	void ToggleReloadVisibility();
 };

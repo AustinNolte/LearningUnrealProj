@@ -11,57 +11,114 @@ void UMainCanvas::NativeConstruct(){
 /*------------- Health Bar Section ---------------- */
 
 void UMainCanvas::UpdateHealth(float Value){
-	HealthBarWidget->UpdateHealth(Value);
+	if (HealthBarWidget) {
+		HealthBarWidget->UpdateHealth(Value);	
+	}
 }
 
 void UMainCanvas::ResetHealth(){
-	HealthBarWidget->ResetHealth();
+	if (HealthBarWidget) {
+		HealthBarWidget->ResetHealth();
+	}
 }
 
 /*------------- Stamina Bar Section ---------------- */
 
 void UMainCanvas::UpdateStamina(float Value){
-	StaminaBarWidget->UpdateStamina(Value);
+	if (StaminaBarWidget) {
+		StaminaBarWidget->UpdateStamina(Value);
+	}
 }
 
 void UMainCanvas::ResetStamina(){
-	StaminaBarWidget->ResetStamina();
+	if (StaminaBarWidget) {
+		StaminaBarWidget->ResetStamina();
+	}
 }
 
 /*------------- Ammo and Weapon Section ---------------- */
 
 void UMainCanvas::UpdateAmmo(int32 CurrAmmo, int32 MAX_AMMO){
-	AmmoAndWeaponDisplay->UpdateAmmo(CurrAmmo, MAX_AMMO);
+	if (AmmoAndWeaponDisplay) {
+		AmmoAndWeaponDisplay->UpdateAmmo(CurrAmmo, MAX_AMMO);
+	}
 }
 
 void UMainCanvas::ResetAmmo(int32 MAX_AMMO){
-	AmmoAndWeaponDisplay->ResetAmmo(MAX_AMMO);
+	if (AmmoAndWeaponDisplay) {
+		AmmoAndWeaponDisplay->ResetAmmo(MAX_AMMO);
+	}
 }
 
 void UMainCanvas::ChangeWeapon(AWeapon* NewWeapon){
-	AmmoAndWeaponDisplay->ChangeWeapon(NewWeapon);
+	if (AmmoAndWeaponDisplay) {
+		AmmoAndWeaponDisplay->ChangeWeapon(NewWeapon);
+	}
+}
+
+void UMainCanvas::ToggleAmmoAndWeaponDisplay(){
+	if (AmmoAndWeaponDisplay) {
+		if (AmmoAndWeaponDisplay->GetVisibility() == ESlateVisibility::Hidden) {
+			AmmoAndWeaponDisplay->SetVisibility(ESlateVisibility::Visible);
+			if (AmmoAndWeaponDisplayBackground) {
+				AmmoAndWeaponDisplayBackground->SetVisibility(ESlateVisibility::Visible);
+			}
+		}
+		else if (AmmoAndWeaponDisplay->GetVisibility() == ESlateVisibility::Visible) {
+			AmmoAndWeaponDisplay->SetVisibility(ESlateVisibility::Hidden);
+			if (AmmoAndWeaponDisplayBackground) {
+				AmmoAndWeaponDisplayBackground->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+	}
 }
 
 /*------------ Crosshair Section -------------------------*/
 
 void UMainCanvas::SetCrosshairThickness(float Value){
-	CrosshairComponent->SetCrosshairThickness(Value);
+	if (CrosshairComponent) {
+		CrosshairComponent->SetCrosshairThickness(Value);
+	}
 }
 
 void UMainCanvas::SetCrosshairGap(float Value){
-	CrosshairComponent->SetCrosshairGap(Value);
+	if (CrosshairComponent) {
+		CrosshairComponent->SetCrosshairGap(Value);
+	}
 }
 
 void UMainCanvas::SetCrosshairLen(float Value){
-	CrosshairComponent->SetCrosshairLen(Value);
+	if (CrosshairComponent) {
+		CrosshairComponent->SetCrosshairLen(Value);
+	}
+}
+
+void UMainCanvas::SetCrosshairDotSize(float Value){
+	if (CrosshairComponent) {
+		CrosshairComponent->SetCrosshairDotSize(Value);
+	}
 }
 
 void UMainCanvas::SetCrosshairColor(FLinearColor Color){
-	CrosshairComponent->SetCrosshairColor(Color);
+	if (CrosshairComponent) {
+		CrosshairComponent->SetCrosshairColor(Color);
+	}
 }
 
 void UMainCanvas::SetCrosshairType(ECrossHairType CrosshairType){
-	CrosshairComponent->SetCrosshairType(CrosshairType);
+	if (CrosshairComponent) {
+		CrosshairComponent->SetCrosshairType(CrosshairType);
+	}
 }
 
+void UMainCanvas::SetReloadPercentage(float Value){
+	if (CrosshairComponent) {
+		CrosshairComponent->SetReloadPercentage(Value);
+	}
+}
 
+void UMainCanvas::ToggleReloadVisibility() {
+	if (CrosshairComponent) {
+		CrosshairComponent->ToggleReloadVisibility();
+	}
+}

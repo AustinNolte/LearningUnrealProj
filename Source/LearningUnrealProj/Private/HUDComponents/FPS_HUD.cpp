@@ -6,9 +6,6 @@ AFPS_HUD::AFPS_HUD(){}
 
 void AFPS_HUD::DrawHUD(){
 	Super::DrawHUD();
-
-	//DrawCrosshair();
-	
 }
 
 void AFPS_HUD::BeginPlay(){
@@ -31,6 +28,9 @@ void AFPS_HUD::BeginPlay(){
 			// same as thickness
 			CrosshairLen *= 0.1;
 			SetCrosshairLen(CrosshairLen);
+
+			CrosshairDotSize *= 0.1;
+			SetCrosshairDotSize(CrosshairDotSize);
 			
 			// color has to be normalized
 			FLinearColor Color = FLinearColor(RGBColor / 255.0f);
@@ -48,15 +48,12 @@ void AFPS_HUD::Tick(float DeltaSeconds){
 /*------------- Health Bar Section ---------------- */
 
 void AFPS_HUD::UpdateHealth(float Value){
-
 	if (MainGameCanvas) {
 		MainGameCanvas->UpdateHealth(Value);
 	}
-
 }
 
 void AFPS_HUD::ResetHealth(){
-
 	if (MainGameCanvas) {
 		MainGameCanvas->ResetHealth();
 	}
@@ -66,14 +63,12 @@ void AFPS_HUD::ResetHealth(){
 
 
 void AFPS_HUD::UpdateStamina(float Value) {
-
 	if (MainGameCanvas) {
 		MainGameCanvas->UpdateStamina(Value);
 	}
 }
 
 void AFPS_HUD::ResetStamina() {
-
 	if (MainGameCanvas) {
 		MainGameCanvas->ResetStamina();
 	}
@@ -82,82 +77,75 @@ void AFPS_HUD::ResetStamina() {
 /*------------- Ammo and Display Section ---------------- */
 
 void AFPS_HUD::UpdateAmmo(int32 CurrAmmo, int32 MAX_AMMO) {
-	MainGameCanvas->UpdateAmmo(CurrAmmo, MAX_AMMO);
+	if (MainGameCanvas) {
+		MainGameCanvas->UpdateAmmo(CurrAmmo, MAX_AMMO);
+	}
 }
 
 void AFPS_HUD::ResetAmmo(int32 MAX_AMMO) {
-	MainGameCanvas->ResetAmmo(MAX_AMMO);
+	if (MainGameCanvas) {
+		MainGameCanvas->ResetAmmo(MAX_AMMO);
+	}
 }
 
 void AFPS_HUD::ChangeWeapon(AWeapon* NewWeapon) {
-	MainGameCanvas->ChangeWeapon(NewWeapon);
+	if (MainGameCanvas) {
+		MainGameCanvas->ChangeWeapon(NewWeapon);
+	}
 }
 
-
-/*------------- Crosshair Section ---------------- */
-
-void AFPS_HUD::DrawCrosshair() {
-
-	// Draw four lines
-	if (Canvas) {
-		// get center screen
-		float CenterX = Canvas->ClipX / 2;
-		float CenterY = Canvas->ClipY / 2;
-
-		// Scale should be uniform from DPIScale of viewport
-		float UniformScale = PlayerOwner->GetLocalPlayer()->ViewportClient->GetDPIScale();
-
-		float ScaledGap = CrosshairGap / UniformScale;
-
-		float ScaledLen = CrosshairLen / UniformScale;
-		
-		// Start X 
-		float LeftLineStart = CenterX - (ScaledGap / 2);
-		float RightLineStart = CenterX + (ScaledGap / 2);
-				
-		// End X
-		float LeftLineEnd = CenterX - (ScaledGap / 2) - ScaledLen;
-		float RightLineEnd = CenterX + (ScaledGap / 2) + ScaledLen;
-
-		 
-		// Start Y 
-		float BottomLineStart = CenterY + (ScaledGap / 2);
-		float TopLineStart = CenterY - (ScaledGap / 2);
-
-		// End Y
-		float BottomLineEnd = CenterY + (ScaledGap / 2) + ScaledLen;
-		float TopLineEnd = CenterY - (ScaledGap / 2) - ScaledLen;
-
-		FLinearColor Color = FLinearColor(RGBColor/255.0f);
-		// left line
-		DrawLine(LeftLineStart, CenterY, LeftLineEnd, CenterY, Color, CrosshairThickness);
-		// right line
-		DrawLine(RightLineStart, CenterY, RightLineEnd, CenterY, Color, CrosshairThickness);
-		// top line
-		DrawLine(CenterX, TopLineStart, CenterX, TopLineEnd, Color, CrosshairThickness);
-		// bottom line
-		DrawLine(CenterX, BottomLineStart, CenterX, BottomLineEnd, Color, CrosshairThickness);
-	} 
+void AFPS_HUD::ToggleAmmoAndWeaponDisplay(){
+	if (MainGameCanvas) {
+		MainGameCanvas->ToggleAmmoAndWeaponDisplay();
+	}
 }
 
 /*------------ Crosshair Section -------------------------*/
 
 void AFPS_HUD::SetCrosshairThickness(float Value) {
-	MainGameCanvas->SetCrosshairThickness(Value);
+	if (MainGameCanvas) {
+		MainGameCanvas->SetCrosshairThickness(Value);
+	}
 }
 
 void AFPS_HUD::SetCrosshairGap(float Value) {
-	MainGameCanvas->SetCrosshairGap(Value);
+	if (MainGameCanvas) {
+		MainGameCanvas->SetCrosshairGap(Value);
+	}
 }
 
 void AFPS_HUD::SetCrosshairLen(float Value) {
-	MainGameCanvas->SetCrosshairLen(Value);
+	if (MainGameCanvas) {
+		MainGameCanvas->SetCrosshairLen(Value);
+	}
+}
+
+void AFPS_HUD::SetCrosshairDotSize(float Value) {
+	if (MainGameCanvas) {
+		MainGameCanvas->SetCrosshairDotSize(Value);
+	}
 }
 
 void AFPS_HUD::SetCrosshairColor(FLinearColor Color) {
-	MainGameCanvas->SetCrosshairColor(Color);
+	if (MainGameCanvas) {
+		MainGameCanvas->SetCrosshairColor(Color);
+	}
 }
 
 void AFPS_HUD::SetCrosshairType(ECrossHairType CrosshairType) {
-	MainGameCanvas->SetCrosshairType(CrosshairType);
+	if (MainGameCanvas) {
+		MainGameCanvas->SetCrosshairType(CrosshairType);
+	}
+}
+
+void AFPS_HUD::SetReloadPercentage(float Value){
+	if (MainGameCanvas) {
+		MainGameCanvas->SetReloadPercentage(Value);
+	}
+}
+
+void AFPS_HUD::ToggleReloadVisibility(){
+	if (MainGameCanvas) {
+		MainGameCanvas->ToggleReloadVisibility();
+	}
 }

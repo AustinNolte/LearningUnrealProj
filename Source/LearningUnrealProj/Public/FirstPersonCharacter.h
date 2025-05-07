@@ -204,6 +204,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	FORCEINLINE bool GetHasWeapon() const { return HasWeapon; }
 
+	UFUNCTION()
+	void ReloadHepler(int32 AmmoCount);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -217,6 +220,9 @@ private:
 	bool canFire = true;
 
 	float timeSinceLastFire = 0.0f;
+
+	float timeSinceStartReload = 0.0f;
+	bool bReloading = false;
 
 	bool bRegenStamina = false;
 	bool bRegenHealth = false;

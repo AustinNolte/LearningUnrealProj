@@ -161,9 +161,19 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 			AnimationInstance->PlayFireMontage();
 		}
 
-
 		canFire = false;
 		timeSinceLastFire = 0.0f;
+	}
+	if (equippedWeapon && equippedWeapon->CurrentAmmo == 0) {
+		if ((!bReloading)) {
+			equippedWeapon->Reload();
+			timeSinceStartReload = 0;
+			bReloading = true;
+			AFPS_HUD* HUD = GetHud();
+			if (HUD) {
+				HUD->ToggleReloadVisibility();
+			}
+		}
 	}
 }
 
@@ -186,8 +196,14 @@ void AFirstPersonCharacter::ChangeWeapon(const FInputActionValue& Value) {
 }
 
 void AFirstPersonCharacter::ReloadWeapon(const FInputActionValue& Value){
-	if (equippedWeapon) {
+	if (equippedWeapon && (!bReloading)) {
 		equippedWeapon->Reload();
+		timeSinceStartReload = 0;
+		bReloading = true;
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->ToggleReloadVisibility();
+		}
 	}
 }
 
@@ -233,37 +249,61 @@ void AFirstPersonCharacter::StartHelathRegenDelay() {
 void AFirstPersonCharacter::addWeapon(AWeapon* weapon) {
 	
 	Inventory->addWeapon(weapon);
+	UE_LOG(LogTemp, Warning, TEXT("InventoryLen: %d"), Inventory->getWeaponInventoryLen());
+	// turn on at the first weapon added
+	if (Inventory->getWeaponInventoryLen() == 1) {
+		
+		AFPS_HUD* HUD = GetHud(); 
+		if (HUD) {
+			HUD->ToggleAmmoAndWeaponDisplay();
+		}
+	}
 
 	OnWeaponAdded.Broadcast(weapon);
-
 	equipWeapon(weapon);
+
+	// add weapon reloading event/delegate
+	weapon->OnReloadDone.AddDynamic(this, &AFirstPersonCharacter::ReloadHepler);
+
 }
 
 void AFirstPersonCharacter::equipWeapon(AWeapon* weapon) {
-	
-	if (equippedWeapon != nullptr) {
-		equippedWeapon->GetSkeleton()->SetVisibility(false);
-		equippedWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	}
-	equippedWeapon = weapon;
-	(equippedWeapon->GetSkeleton())->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("WeaponSocket"));
-	equippedWeapon->GetSkeleton()->SetVisibility(true);
+	if (!bReloading) {
+		if (equippedWeapon != nullptr) {
+			equippedWeapon->GetSkeleton()->SetVisibility(false);
+			equippedWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		}
+		equippedWeapon = weapon;
+		(equippedWeapon->GetSkeleton())->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("WeaponSocket"));
+		equippedWeapon->GetSkeleton()->SetVisibility(true);
 
-	HasWeapon = true;
-	if (AnimationInstance) {
-		AnimationInstance->setbHoldingWeapon(HasWeapon);
+		HasWeapon = true;
+		if (AnimationInstance) {
+			AnimationInstance->setbHoldingWeapon(HasWeapon);
+		}
+		OnWeaponChanged.Broadcast(equippedWeapon);
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->ChangeWeapon(equippedWeapon);
+		}
 	}
-	OnWeaponChanged.Broadcast(equippedWeapon);
+}
+
+void AFirstPersonCharacter::ReloadHepler(int32 AmmoCount){
+	
+	bReloading = false;
+
 	AFPS_HUD* HUD = GetHud();
 	if (HUD) {
-		HUD->ChangeWeapon(equippedWeapon);
+		HUD->ResetAmmo(AmmoCount);
+		HUD->ToggleReloadVisibility();
 	}
 }
 
 void AFirstPersonCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	
-	if (equippedWeapon) {
+	if (equippedWeapon && !canFire) {
 		
 		timeSinceLastFire += DeltaTime;
 
@@ -313,6 +353,14 @@ void AFirstPersonCharacter::Tick(float DeltaTime) {
 
 			HUD->UpdateStamina(Stamina / MAX_STAMINA);
 
+		}
+	}
+
+	if (bReloading) {
+		timeSinceStartReload += DeltaTime;
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->SetReloadPercentage(timeSinceStartReload / equippedWeapon->ReloadTime);
 		}
 	}
 } 

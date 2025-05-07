@@ -37,11 +37,20 @@ public:
 	/* CrosshairLen if crosshair type, in percent of screen space */
 	void SetCrosshairLen(float Value);
 
+	/* Corsshair Dot size if crosshair type is dot */
+	void SetCrosshairDotSize(float Value);
+
 	/* Color of crosshair in format of (R,G,B,A) */
 	void SetCrosshairColor(FLinearColor Color);
 
 	/* Set CrosshairType from enum of ECrossHairType */
 	void SetCrosshairType(ECrossHairType CrosshairType);
+	
+	/* Set Reload Animation Percentage, Value should be 0-1 */
+	void SetReloadPercentage(float Value);
+
+	/* Toggle Visibility of reload circle */
+	void ToggleReloadVisibility();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UImage* CrosshairImage;
@@ -49,7 +58,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
 	UMaterialInterface* CrosshairMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UImage* ReloadAnimationImage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
+	UMaterialInterface* ReloadAnimationMaterial;
+
+
 private:
-	UMaterialInstanceDynamic* DynamicMaterial;
-	
+	UMaterialInstanceDynamic* CrosshairDynamicMaterial;
+	UMaterialInstanceDynamic* ReloadAnimationDynamicMaterial;
 };

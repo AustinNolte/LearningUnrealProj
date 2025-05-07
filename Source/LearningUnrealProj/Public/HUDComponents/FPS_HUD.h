@@ -41,6 +41,10 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "10.0"))
 	float CrosshairThickness = 1;
 
+	/* Dot Size if crosshair type is dot */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.2", ClampMax = "5.0"))
+	float CrosshairDotSize = 1;
+
 	/* Crosshair color, Vector of (R,G,B,A) with A being Alpha (Opacity), Default white */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "255.0"))
 	FVector4 RGBColor = FVector4(255.0f, 255.0f, 255.0f, 255.0f); 
@@ -77,13 +81,8 @@ public:
 	/* Changes weapon, this includes weapon icon and ammo count etc */
 	void ChangeWeapon(AWeapon* NewWeapon);
 
-	/*------------- Crosshair Section ---------------- */
-	
-	void DrawCrosshair();
-	
-	void DrawCircleCrosshair();
-	
-	void DrawDotCrosshair();
+	/* Toggles Visbility of Ammo and Weapon display */
+	void ToggleAmmoAndWeaponDisplay();
 
 	/*------------ Crosshair Section -------------------------*/
 
@@ -96,11 +95,20 @@ public:
 	/* CrosshairLen if crosshair type, in percent of screen space */
 	void SetCrosshairLen(float Value);
 
+	/* Corsshair Dot size if crosshair type is dot */
+	void SetCrosshairDotSize(float Value);
+
 	/* Color of crosshair in format of (R,G,B,A) */
 	void SetCrosshairColor(FLinearColor Color);
 
 	/* Set CrosshairType from enum of ECrossHairType */
 	void SetCrosshairType(ECrossHairType CrosshairType);
+
+	/* Set Reload Animation Percentage, Value should be 0-1 */
+	void SetReloadPercentage(float Value);
+
+	/* Toggle Visibility of reload circle */
+	void ToggleReloadVisibility();
 
 private:
 	UMainCanvas* MainGameCanvas;

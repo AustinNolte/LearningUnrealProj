@@ -10,6 +10,8 @@
 class USkeletalMeshComponent;
 class UTexture2D;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReloadDone, int32, AmmoCount);
+
 UCLASS()
 class LEARNINGUNREALPROJ_API AWeapon : public AActor {
 
@@ -40,6 +42,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Attributes", meta = (AllowPrivateAccess = "true"))
 	FString WeaponName;
 
+	UPROPERTY(BlueprintAssignable, Category = "ReloadTiming")
+	FOnReloadDone OnReloadDone;
 
 	/* Max Ammo of the weapon */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
