@@ -1,3 +1,4 @@
+#include <WeaponPickup.h>
 #include "FirstPersonCharacter.h"
 
 // Sets default values
@@ -125,6 +126,12 @@ void AFirstPersonCharacter::Interact(const FInputActionValue& Value) {
 
 		AInteractable* InteractableActor = Cast<AInteractable>(Actor);
 		if (InteractableActor) {
+			if (AWeaponPickup* WeaponPickup = Cast <AWeaponPickup> (InteractableActor)) {
+				// don't want to interact with weapon pickup if realoding weapon
+				if (bReloading) {
+					return;
+				}
+			}
 			InteractableActor->Interact(this);
 
 		}

@@ -88,6 +88,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	UInputAction* ReloadAction;
 
+	/* Pause Action */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	UInputAction* PauseAction;
 
 	/* Max Sprint Speed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
