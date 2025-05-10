@@ -108,6 +108,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprinting")
 	float SprintAccelerationSpeed = 3072.0f;
 
+	/* Sensitivity for player to control from menus */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sensitivity")
+	float Sensitivity = 1; 
+
 	/* Health of Player default 500 set from MAX_HEALTH */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	float Health;
@@ -218,6 +222,11 @@ public:
 	void StartStaminaRegenDelay();
 	void StartHelathRegenDelay();
 
+
+	/* Helper functions */
+	UFUNCTION(BlueprintCallable)
+	AFPS_HUD* GetHud();
+
 private:
 	/** ------------------------ WEAPON FIRERATE HANDLING ------------------------ **/
 	bool canFire = true;
@@ -237,6 +246,5 @@ private:
 	FTimerHandle HealthRegenTimer;
 	FTimerHandle StaminaRegenTimer;
 
-	/* Helper functions */
-	AFPS_HUD* GetHud();
+	
 };

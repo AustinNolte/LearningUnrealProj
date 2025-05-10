@@ -30,7 +30,7 @@ public:
 	TSubclassOf<UMainCanvas> MainGameUIClass;
 
 	/* Crosshair gap*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin ="0.0", ClampMax = "10.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin ="0.0", ClampMax = "5.0"))
 	float CrosshairGap = 1;
 
 	/* Crosshair len */
@@ -87,21 +87,27 @@ public:
 	/*------------ Crosshair Section -------------------------*/
 
 	/* Crosshair thickeness, in percent of screen space */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairThickness(float Value);
 
 	/* Crosshair Gap, in percent of screen space */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairGap(float Value);
 
 	/* CrosshairLen if crosshair type, in percent of screen space */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairLen(float Value);
 
 	/* Corsshair Dot size if crosshair type is dot */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairDotSize(float Value);
 
 	/* Color of crosshair in format of (R,G,B,A) */
-	void SetCrosshairColor(FLinearColor Color);
+	UFUNCTION(BlueprintCallable)
+	void SetCrosshairColor(FVector4 Color);
 
 	/* Set CrosshairType from enum of ECrossHairType */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairType(ECrossHairType CrosshairType);
 
 	/* Set Reload Animation Percentage, Value should be 0-1 */

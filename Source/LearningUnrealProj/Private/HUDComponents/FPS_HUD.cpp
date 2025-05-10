@@ -18,7 +18,7 @@ void AFPS_HUD::BeginPlay(){
 			MainGameCanvas->AddToViewport();
 
 			// from manual tweaking, This is too allow for ease of setting. Simpler to image crosshair thickness of 10 rather than .1
-			CrosshairThickness *= 0.01;
+			CrosshairThickness *= 0.005;
 			SetCrosshairThickness(CrosshairThickness);
 		
 			// same as thickness
@@ -26,15 +26,13 @@ void AFPS_HUD::BeginPlay(){
 			SetCrosshairGap(CrosshairGap);
 			
 			// same as thickness
-			CrosshairLen *= 0.1;
+			CrosshairLen *= 0.05;
 			SetCrosshairLen(CrosshairLen);
 
-			CrosshairDotSize *= 0.1;
+			CrosshairDotSize *= 0.05;
 			SetCrosshairDotSize(CrosshairDotSize);
 			
-			// color has to be normalized
-			FLinearColor Color = FLinearColor(RGBColor / 255.0f);
-			SetCrosshairColor(Color);
+			SetCrosshairColor(RGBColor);
 			
 			SetCrosshairType(Type);
 		}
@@ -126,9 +124,11 @@ void AFPS_HUD::SetCrosshairDotSize(float Value) {
 	}
 }
 
-void AFPS_HUD::SetCrosshairColor(FLinearColor Color) {
+void AFPS_HUD::SetCrosshairColor(FVector4 Color) {
 	if (MainGameCanvas) {
-		MainGameCanvas->SetCrosshairColor(Color);
+		FLinearColor LinearColor = FLinearColor((float)Color.X / 255.0f, (float)Color.Y / 255.0f, (float)Color.Z / 255.0f);
+
+		MainGameCanvas->SetCrosshairColor(LinearColor);
 	}
 }
 

@@ -29,27 +29,36 @@ public:
 	virtual void NativeConstruct() override;
 	
 	/* Crosshair thickeness, in percent of screen space */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairThickness(float Value);
 
 	/* Crosshair Gap, in percent of screen space */
+	UFUNCTION(BlueprintCallable)
+
 	void SetCrosshairGap(float Value);
 
 	/* CrosshairLen if crosshair type, in percent of screen space */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairLen(float Value);
 
 	/* Corsshair Dot size if crosshair type is dot */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairDotSize(float Value);
 
 	/* Color of crosshair in format of (R,G,B,A) */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairColor(FLinearColor Color);
 
 	/* Set CrosshairType from enum of ECrossHairType */
+	UFUNCTION(BlueprintCallable)
 	void SetCrosshairType(ECrossHairType CrosshairType);
 	
 	/* Set Reload Animation Percentage, Value should be 0-1 */
+	UFUNCTION(BlueprintCallable)
 	void SetReloadPercentage(float Value);
 
 	/* Toggle Visibility of reload circle */
+	UFUNCTION(BlueprintCallable)
 	void ToggleReloadVisibility();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))

@@ -107,6 +107,11 @@ void AFirstPersonCharacter::Look(const FInputActionValue& Value) {
 	// input is a Vector2D
 	FVector2D LookVector = Value.Get<FVector2D>();
 
+	// dividing by 4 as the default is too fast to really get a good control on the lower end for a custom sens
+	LookVector /= 4;
+
+	LookVector *= Sensitivity;
+
 	if (Controller != nullptr) {
 
 		// add look input
