@@ -17,6 +17,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Interactable.h"
+
+#include "HUDComponents/FPS_HUD.h" // called fps hud but also used for third person, on begin play will take out first person componets
+
 #include "ThirdPersonCharacter.generated.h"
 
 class UMeleePlayerAnimInstance;
@@ -147,6 +150,11 @@ public:
 	void StartStaminaRegenDelay();
 	void StartHelathRegenDelay();
 
+	/* Helper functions */
+
+
+	/* Returns hud class */
+	AFPS_HUD* GetHud();
 private:
 	
 	bool bRegenStamina = false;

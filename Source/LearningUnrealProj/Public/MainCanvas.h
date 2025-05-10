@@ -123,4 +123,10 @@ public:
 
 	/* Toggle HitMarker */
 	void ToggleHitMarker();
+
+	/* Toggle Canvas Elements to FPS mode */
+	void ToggleFPSMode();
+
+	/* Toggle Elements to TPS mode */
+	void ToggleTPSMode();
 };

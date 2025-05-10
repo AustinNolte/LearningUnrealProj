@@ -64,6 +64,12 @@ public:
 	/* Toggle hitmarkers */
 	void ToggleHitMarker();
 
+	/* Toggle FPS Mode */
+	void ToggleFPSMode();
+
+	/* Toggle TPS Mode*/
+	void ToggleTPSMode();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UImage* CrosshairImage;
 

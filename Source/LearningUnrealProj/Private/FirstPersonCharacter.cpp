@@ -36,6 +36,13 @@ void AFirstPersonCharacter::BeginPlay(){
 	GetCharacterMovement()->BrakingDecelerationWalking = 10000.0f;
 	GetCharacterMovement()->AirControl = 1.0f;
 
+	// toggle hud to fps mode 
+	AFPS_HUD* HUD = GetHud();
+
+	if (HUD) {
+		HUD->ToggleFPSMode();
+	}
+
 
 }
 

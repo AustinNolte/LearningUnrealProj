@@ -155,3 +155,11 @@ void AFPS_HUD::ToggleHitMarker() {
 		MainGameCanvas->ToggleHitMarker();
 	}
 }
+
+void AFPS_HUD::ToggleFPSMode(){
+	MainGameCanvas->ToggleFPSMode();
+}
+
+void AFPS_HUD::ToggleTPSMode(){
+	MainGameCanvas->ToggleTPSMode();
+}

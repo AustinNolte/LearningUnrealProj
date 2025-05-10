@@ -103,6 +103,18 @@ void UCrosshairComponent::ToggleHitMarker(){
     }
 }
 
+void UCrosshairComponent::ToggleFPSMode(){
+    if (CrosshairImage) {
+        CrosshairImage->SetVisibility(ESlateVisibility::Visible);
+    }
+}
+
+void UCrosshairComponent::ToggleTPSMode() {
+    if (CrosshairImage) {
+        CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+
 void UCrosshairComponent::HitMarkerHelper() {
     if (HitMarkerImage) {
         HitMarkerImage->SetVisibility(ESlateVisibility::Hidden);

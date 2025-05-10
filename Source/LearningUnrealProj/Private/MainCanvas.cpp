@@ -128,3 +128,18 @@ void UMainCanvas::ToggleHitMarker(){
 		CrosshairComponent->ToggleHitMarker();
 	}
 }
+
+void UMainCanvas::ToggleFPSMode(){
+	if (CrosshairComponent) {
+		CrosshairComponent->ToggleFPSMode();
+	}
+}
+
+void UMainCanvas::ToggleTPSMode(){
+	if (AmmoAndWeaponDisplay) {
+		AmmoAndWeaponDisplay->SetVisibility(ESlateVisibility::Hidden);
+	}
+	if (CrosshairComponent) {
+		CrosshairComponent->ToggleTPSMode();
+	}
+}

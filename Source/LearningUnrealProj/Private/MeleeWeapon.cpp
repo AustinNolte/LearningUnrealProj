@@ -65,6 +65,10 @@ void AMeleeWeapon::AttackCombo(FAttackData Data) {
 	if (PlayerOwner) {
 		if (PlayerOwner->Stamina > 0 && CurrentAttackIndex < Data.StaminaPerAttack.Num()) {
 			PlayerOwner->Stamina -= Data.StaminaPerAttack[CurrentAttackIndex];
+			AFPS_HUD* HUD = PlayerOwner->GetHud();
+			if (HUD) {
+				HUD->UpdateStamina(PlayerOwner->Stamina);
+			}
 			PlayerOwner->StartStaminaRegenDelay();
 		}
 		else {	
@@ -118,6 +122,12 @@ void AMeleeWeapon::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 				float Damage = CurrentAttackData.DamagePerAttack[GetCurrentAttackIndex()];
 				UE_LOG(LogTemp, Error, TEXT("Damage: %f"), Damage);
 				UGameplayStatics::ApplyDamage(EnemyHit, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
+
+				AFPS_HUD* HUD = PlayerOwner->GetHud();
+				if (HUD) {
+					HUD->ToggleHitMarker();
+				}
+
 			}
 		}
 	}

@@ -119,6 +119,12 @@ public:
 	/* Toggle hit marker */
 	void ToggleHitMarker();
 
+	/* Toggle HUD to FPS mode */
+	void ToggleFPSMode();
+
+	/* Toggle HUD to TPS mode */
+	void ToggleTPSMode();
+
 private:
 	UMainCanvas* MainGameCanvas;
 };
