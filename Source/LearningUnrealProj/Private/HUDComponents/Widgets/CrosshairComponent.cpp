@@ -22,6 +22,12 @@ void UCrosshairComponent::NativeConstruct(){
         ReloadAnimationImage->SetBrushFromMaterial(ReloadAnimationDynamicMaterial);
         
     }
+
+    // Hitmarker is not dynamic, no need to make a dynamic material
+    if (HitMarkerImage && HitMarkerMaterial) {
+        HitMarkerImage->SetBrushFromMaterial(HitMarkerMaterial);
+        HitMarkerImage->SetVisibility(ESlateVisibility::Hidden);
+    }
 }
 
 void UCrosshairComponent::SetCrosshairThickness(float Value){
@@ -81,5 +87,24 @@ void UCrosshairComponent::ToggleReloadVisibility() {
         else if(ReloadAnimationImage->GetVisibility() == ESlateVisibility::Hidden) {
             ReloadAnimationImage->SetVisibility(ESlateVisibility::Visible);
         }
+    }
+}
+
+void UCrosshairComponent::ToggleHitMarker(){
+    if (HitMarkerImage) {
+        HitMarkerImage->SetVisibility(ESlateVisibility::Visible);
+        GetWorld()->GetTimerManager().SetTimer(
+            HitMarkerTimer,
+            this,
+            &UCrosshairComponent::HitMarkerHelper,
+            0.1f,
+            false
+        );
+    }
+}
+
+void UCrosshairComponent::HitMarkerHelper() {
+    if (HitMarkerImage) {
+        HitMarkerImage->SetVisibility(ESlateVisibility::Hidden);
     }
 }

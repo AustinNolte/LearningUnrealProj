@@ -2,6 +2,8 @@
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "FirstPersonCharacter.h"
+#include "HUDComponents/FPS_HUD.h"
 #include "Kismet/GameplayStatics.h"
 #include "BasicEnemy.h"
 
@@ -77,6 +79,19 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	ABasicEnemy* EnemyHit = Cast<ABasicEnemy>(OtherActor);
 	if (EnemyHit) {
 		UGameplayStatics::ApplyDamage(EnemyHit, damage, GetInstigatorController(), this, UDamageType::StaticClass());
+
+		// play hit marker section
+		APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0); // single player therefore 0th index
+
+		AFirstPersonCharacter* Player = Cast<AFirstPersonCharacter>(PlayerPawn);
+		if (Player) {
+			AFPS_HUD* HUD = Player->GetHud();
+			if (HUD) {
+				HUD->ToggleHitMarker();
+			}
+		}
+
+
 		Destroy();
 	}
 }

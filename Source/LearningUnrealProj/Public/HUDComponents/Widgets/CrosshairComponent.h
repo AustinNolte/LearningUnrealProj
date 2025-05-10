@@ -61,6 +61,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ToggleReloadVisibility();
 
+	/* Toggle hitmarkers */
+	void ToggleHitMarker();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UImage* CrosshairImage;
 
@@ -73,8 +76,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
 	UMaterialInterface* ReloadAnimationMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta =(BindWidget))
+	UImage* HitMarkerImage;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Crosshair")
+	UMaterialInterface* HitMarkerMaterial;
+
 
 private:
 	UMaterialInstanceDynamic* CrosshairDynamicMaterial;
 	UMaterialInstanceDynamic* ReloadAnimationDynamicMaterial;
+
+	void HitMarkerHelper();
+	FTimerHandle HitMarkerTimer;
 };

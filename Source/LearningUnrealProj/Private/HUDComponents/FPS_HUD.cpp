@@ -51,7 +51,7 @@ void AFPS_HUD::UpdateHealth(float Value){
 	}
 }
 
-void AFPS_HUD::ResetHealth(){
+void AFPS_HUD::ResetHealth() {
 	if (MainGameCanvas) {
 		MainGameCanvas->ResetHealth();
 	}
@@ -92,7 +92,7 @@ void AFPS_HUD::ChangeWeapon(AWeapon* NewWeapon) {
 	}
 }
 
-void AFPS_HUD::ToggleAmmoAndWeaponDisplay(){
+void AFPS_HUD::ToggleAmmoAndWeaponDisplay() {
 	if (MainGameCanvas) {
 		MainGameCanvas->ToggleAmmoAndWeaponDisplay();
 	}
@@ -138,14 +138,20 @@ void AFPS_HUD::SetCrosshairType(ECrossHairType CrosshairType) {
 	}
 }
 
-void AFPS_HUD::SetReloadPercentage(float Value){
+void AFPS_HUD::SetReloadPercentage(float Value) {
 	if (MainGameCanvas) {
 		MainGameCanvas->SetReloadPercentage(Value);
 	}
 }
 
-void AFPS_HUD::ToggleReloadVisibility(){
+void AFPS_HUD::ToggleReloadVisibility() {
 	if (MainGameCanvas) {
 		MainGameCanvas->ToggleReloadVisibility();
+	}
+}
+
+void AFPS_HUD::ToggleHitMarker() {
+	if (MainGameCanvas) {
+		MainGameCanvas->ToggleHitMarker();
 	}
 }

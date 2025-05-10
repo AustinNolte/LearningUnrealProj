@@ -120,4 +120,7 @@ public:
 
 	/* Toggle Visibility of reload circle */
 	void ToggleReloadVisibility();
+
+	/* Toggle HitMarker */
+	void ToggleHitMarker();
 };

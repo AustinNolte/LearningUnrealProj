@@ -116,6 +116,9 @@ public:
 	/* Toggle Visibility of reload circle */
 	void ToggleReloadVisibility();
 
+	/* Toggle hit marker */
+	void ToggleHitMarker();
+
 private:
 	UMainCanvas* MainGameCanvas;
 };

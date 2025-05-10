@@ -122,3 +122,9 @@ void UMainCanvas::ToggleReloadVisibility() {
 		CrosshairComponent->ToggleReloadVisibility();
 	}
 }
+
+void UMainCanvas::ToggleHitMarker(){
+	if (CrosshairComponent) {
+		CrosshairComponent->ToggleHitMarker();
+	}
+}
