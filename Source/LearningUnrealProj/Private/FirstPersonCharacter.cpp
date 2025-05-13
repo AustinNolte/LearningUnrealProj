@@ -1,3 +1,4 @@
+#include <WeaponPickup.h>
 #include "FirstPersonCharacter.h"
 
 // Sets default values
@@ -34,6 +35,13 @@ void AFirstPersonCharacter::BeginPlay(){
 	GetCharacterMovement()->BrakingFrictionFactor = 100.0f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 10000.0f;
 	GetCharacterMovement()->AirControl = 1.0f;
+
+	// toggle hud to fps mode 
+	AFPS_HUD* HUD = GetHud();
+
+	if (HUD) {
+		HUD->ToggleFPSMode();
+	}
 
 
 }
@@ -106,6 +114,11 @@ void AFirstPersonCharacter::Look(const FInputActionValue& Value) {
 	// input is a Vector2D
 	FVector2D LookVector = Value.Get<FVector2D>();
 
+	// dividing by 4 as the default is too fast to really get a good control on the lower end for a custom sens
+	LookVector /= 4;
+
+	LookVector *= Sensitivity;
+
 	if (Controller != nullptr) {
 
 		// add look input
@@ -125,6 +138,12 @@ void AFirstPersonCharacter::Interact(const FInputActionValue& Value) {
 
 		AInteractable* InteractableActor = Cast<AInteractable>(Actor);
 		if (InteractableActor) {
+			if (AWeaponPickup* WeaponPickup = Cast <AWeaponPickup> (InteractableActor)) {
+				// don't want to interact with weapon pickup if realoding weapon
+				if (bReloading) {
+					return;
+				}
+			}
 			InteractableActor->Interact(this);
 
 		}
@@ -141,7 +160,6 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 
 		FCollisionQueryParams CollisionParams;
 
-
 		FHitResult OutHit;
 		if (GetWorld()->LineTraceSingleByChannel(OutHit, camLoc, endPoint, ECC_Pawn, CollisionParams)){
 			//UE_LOG(LogTemp, Warning, TEXT("Hit at Location: %s"), *OutHit.Location.ToString());
@@ -150,15 +168,31 @@ void AFirstPersonCharacter::FireWeapon(const FInputActionValue& Value) {
 
 		FVector3d shotDirection =  endPoint - equippedWeapon->GetSkeleton()->GetSocketLocation("ProjectileSpawn");
 		shotDirection.Normalize();
-		equippedWeapon->Fire(shotDirection);
+		if(equippedWeapon->Fire(shotDirection)){
+		
+			AFPS_HUD* HUD = GetHud();
+			if (HUD) {
+				HUD->UpdateAmmo(equippedWeapon->CurrentAmmo, equippedWeapon->MAX_AMMO);
+			}
+		}
 
 		if (AnimationInstance){
 			AnimationInstance->PlayFireMontage();
 		}
 
-
 		canFire = false;
 		timeSinceLastFire = 0.0f;
+	}
+	if (equippedWeapon && equippedWeapon->CurrentAmmo == 0) {
+		if ((!bReloading)) {
+			equippedWeapon->Reload();
+			timeSinceStartReload = 0;
+			bReloading = true;
+			AFPS_HUD* HUD = GetHud();
+			if (HUD) {
+				HUD->ToggleReloadVisibility();
+			}
+		}
 	}
 }
 
@@ -181,25 +215,52 @@ void AFirstPersonCharacter::ChangeWeapon(const FInputActionValue& Value) {
 }
 
 void AFirstPersonCharacter::ReloadWeapon(const FInputActionValue& Value){
-	if (equippedWeapon) {
+	if (equippedWeapon && (!bReloading)) {
 		equippedWeapon->Reload();
+		timeSinceStartReload = 0;
+		bReloading = true;
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->ToggleReloadVisibility();
+		}
 	}
-
-	// TODO: Put in reload animation
 }
 
 void AFirstPersonCharacter::StartSprint(const FInputActionValue& Value){
-	bIsSprinting = true;
+	if (Stamina > 0) {
+		bIsSprinting = true;
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed; 
+		StartStaminaRegenDelay();
+	}
 
-	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	//GetCharacterMovement()->MaxAcceleration = SprintAccelerationSpeed;
 }
 
 void AFirstPersonCharacter::StopSprint(const FInputActionValue& Value) {
-	bIsSprinting = false;
+	if (bIsSprinting) {
+		bIsSprinting = false;
+		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
+	}
+}
 
-	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
-	//GetCharacterMovement()->MaxAcceleration = WalkingAccelerationSpeed;
+void AFirstPersonCharacter::StartStaminaRegenDelay() {
+	GetWorld()->GetTimerManager().SetTimer(
+		StaminaRegenTimer,
+		this,
+		&AFirstPersonCharacter::EnableStaminaRegen,
+		StaminaRegenDelay,   // Delay in seconds
+		false   // Don't loop
+	);
+	UE_LOG(LogTemp, Warning, TEXT("Stamina Regen Set: %f"), Stamina);
+}
+
+void AFirstPersonCharacter::StartHelathRegenDelay() {
+	GetWorld()->GetTimerManager().SetTimer(
+		HealthRegenTimer,
+		this,
+		&AFirstPersonCharacter::EnableHealthRegen,
+		HealthRegenDelay,   // Delay in seconds
+		false   // Don't loop
+	);
 }
 
 //** ------------------------ INVENTORY SECTION ------------------------ **/
@@ -207,33 +268,61 @@ void AFirstPersonCharacter::StopSprint(const FInputActionValue& Value) {
 void AFirstPersonCharacter::addWeapon(AWeapon* weapon) {
 	
 	Inventory->addWeapon(weapon);
+	UE_LOG(LogTemp, Warning, TEXT("InventoryLen: %d"), Inventory->getWeaponInventoryLen());
+	// turn on at the first weapon added
+	if (Inventory->getWeaponInventoryLen() == 1) {
+		
+		AFPS_HUD* HUD = GetHud(); 
+		if (HUD) {
+			HUD->ToggleAmmoAndWeaponDisplay();
+		}
+	}
 
 	OnWeaponAdded.Broadcast(weapon);
-
 	equipWeapon(weapon);
+
+	// add weapon reloading event/delegate
+	weapon->OnReloadDone.AddDynamic(this, &AFirstPersonCharacter::ReloadHepler);
+
 }
 
 void AFirstPersonCharacter::equipWeapon(AWeapon* weapon) {
-	
-	if (equippedWeapon != nullptr) {
-		equippedWeapon->GetSkeleton()->SetVisibility(false);
-		equippedWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	}
-	equippedWeapon = weapon;
-	(equippedWeapon->GetSkeleton())->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("WeaponSocket"));
-	equippedWeapon->GetSkeleton()->SetVisibility(true);
+	if (!bReloading) {
+		if (equippedWeapon != nullptr) {
+			equippedWeapon->GetSkeleton()->SetVisibility(false);
+			equippedWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		}
+		equippedWeapon = weapon;
+		(equippedWeapon->GetSkeleton())->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("WeaponSocket"));
+		equippedWeapon->GetSkeleton()->SetVisibility(true);
 
-	HasWeapon = true;
-	if (AnimationInstance) {
-		AnimationInstance->setbHoldingWeapon(HasWeapon);
+		HasWeapon = true;
+		if (AnimationInstance) {
+			AnimationInstance->setbHoldingWeapon(HasWeapon);
+		}
+		OnWeaponChanged.Broadcast(equippedWeapon);
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->ChangeWeapon(equippedWeapon);
+		}
 	}
-	OnWeaponChanged.Broadcast(equippedWeapon);
+}
+
+void AFirstPersonCharacter::ReloadHepler(int32 AmmoCount){
+	
+	bReloading = false;
+
+	AFPS_HUD* HUD = GetHud();
+	if (HUD) {
+		HUD->ResetAmmo(AmmoCount);
+		HUD->ToggleReloadVisibility();
+	}
 }
 
 void AFirstPersonCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	
-	if (equippedWeapon) {
+	if (equippedWeapon && !canFire) {
 		
 		timeSinceLastFire += DeltaTime;
 
@@ -242,4 +331,71 @@ void AFirstPersonCharacter::Tick(float DeltaTime) {
 			canFire = true;
 		}
 	}
+
+	// will lose stamina 1.5x faster than regenerated 
+	if (bIsSprinting) {
+		Stamina -= (StaminaRegenRate * 1.5f) * DeltaTime;
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->UpdateStamina(Stamina / MAX_STAMINA);
+		}
+	}
+
+	if (bRegenHealth) {
+		Health = Health + (HealthRegenRate * DeltaTime);
+
+		AFPS_HUD* HUD = GetHud();
+
+		if (HUD) {
+			HUD->UpdateHealth(Health / MAX_HEALTH);
+		}
+
+		if (Health > MAX_HEALTH) {
+			Health = MAX_HEALTH;
+			bRegenHealth = false;
+
+			HUD->UpdateHealth(Health / MAX_HEALTH);
+
+		}
+	}
+	if (bRegenStamina) {
+		Stamina = Stamina + (StaminaRegenRate * DeltaTime);
+		AFPS_HUD* HUD = GetHud();
+		
+		if (HUD) {
+			HUD->UpdateStamina(Stamina / MAX_STAMINA);
+		}
+
+		if (Stamina > MAX_STAMINA) {
+			Stamina = MAX_STAMINA;
+			bRegenStamina = false;
+
+			HUD->UpdateStamina(Stamina / MAX_STAMINA);
+
+		}
+	}
+
+	if (bReloading) {
+		timeSinceStartReload += DeltaTime;
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->SetReloadPercentage(timeSinceStartReload / equippedWeapon->ReloadTime);
+		}
+	}
 } 
+
+
+/* Helper Functions */
+
+/* Returns HUD already casted to correct type */
+AFPS_HUD* AFirstPersonCharacter::GetHud(){
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC && PC->GetHUD()) {
+		AFPS_HUD* HUD = Cast<AFPS_HUD>(PC->GetHUD());
+		if (HUD){
+			return HUD;
+		}
+	}
+	return nullptr;
+}

@@ -17,6 +17,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Interactable.h"
+
+#include "HUDComponents/FPS_HUD.h" // called fps hud but also used for third person, on begin play will take out first person componets
+
 #include "ThirdPersonCharacter.generated.h"
 
 class UMeleePlayerAnimInstance;
@@ -92,6 +95,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* PauseAction;
+
 	/* Weapon of character */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowAbstract = false, AllowedClasses = "AMeleeWeapon"))
 	UChildActorComponent* Weapon;
@@ -147,6 +153,18 @@ public:
 	void StartStaminaRegenDelay();
 	void StartHelathRegenDelay();
 
+	FORCEINLINE void StopStaminaRegen() { bRegenStamina = false; }
+	FORCEINLINE void StopHealthRegen() { bRegenHealth = false; }
+	
+	FORCEINLINE bool IsStaminaRegen() { return bRegenStamina; }
+	FORCEINLINE bool IsHealthRegen() { return bRegenHealth;  }
+
+	/* Helper functions */
+
+
+	/* Returns hud class */
+	UFUNCTION(BlueprintCallable)
+	AFPS_HUD* GetHud();
 private:
 	
 	bool bRegenStamina = false;

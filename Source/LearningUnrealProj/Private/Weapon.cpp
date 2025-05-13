@@ -28,7 +28,7 @@ void AWeapon::BeginPlay(){
 	
 }
 // Shoots towards Direction with a given bloom associated with the current weapon being used held in FireSpread
-void AWeapon::Fire(FVector3d direction) {
+bool AWeapon::Fire(FVector3d direction) {
 
 	UWorld* const World = GetWorld();
 
@@ -50,10 +50,10 @@ void AWeapon::Fire(FVector3d direction) {
 		World->SpawnActor<AProjectile>(ProjectileClass, spawnLocation, spawnRotation, actorSpawnParams);
 
 		--CurrentAmmo;
-		UE_LOG(LogTemp, Warning, TEXT("Here in Weapon, Current AMMO: %d"), CurrentAmmo);
-		if (CurrentAmmo <= 0) {
-			Reload();
-		}
+		return true;
+	}
+	else {
+		return false;
 	}
 }
 
@@ -73,8 +73,10 @@ void AWeapon::ReloadHelper() {
 
 	UE_LOG(LogTemp, Warning, TEXT("Here in Weapon ReloadHelper"));
 
-	CurrentAmmo = MaxAmmo;
+	CurrentAmmo = MAX_AMMO;
 	bIsReloading = false;
+
+	OnReloadDone.Broadcast(MAX_AMMO);
 }
 
 

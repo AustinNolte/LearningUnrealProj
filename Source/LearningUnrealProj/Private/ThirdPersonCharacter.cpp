@@ -53,6 +53,12 @@ void AThirdPersonCharacter::BeginPlay(){
 	if (CurrWeapon) {
 		CurrWeapon->SetPlayerOwner(this, AnimInstance);
 	}
+
+	// toggle TPS mode
+	AFPS_HUD* HUD = GetHud();
+
+	HUD->ToggleTPSMode();
+
 }
 
 // Called every frame
@@ -61,15 +67,28 @@ void AThirdPersonCharacter::Tick(float DeltaTime){
 
 	if (bRegenHealth) {
 		Health = Health + (HealthRegenRate * DeltaTime);
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->UpdateHealth(Health/MAX_HEALTH);
+		}
+		
 		if (Health > MAX_HEALTH) {
 			Health = MAX_HEALTH;
+			if (HUD) {
+				HUD->UpdateHealth(Health/MAX_HEALTH);
+			}
 			bRegenHealth = false;
 		}
 	}
 	if (bRegenStamina) {
 		Stamina = Stamina + (StaminaRegenRate * DeltaTime);
+		AFPS_HUD* HUD = GetHud();
+		if (HUD) {
+			HUD->UpdateStamina(Stamina/MAX_STAMINA);
+		}
 		if (Stamina > MAX_STAMINA) {
 			Stamina = MAX_STAMINA;
+			HUD->UpdateStamina(Stamina/MAX_STAMINA);
 			bRegenStamina = false;
 		}
 	}
@@ -217,4 +236,15 @@ void AThirdPersonCharacter::StartHelathRegenDelay(){
 		HealthRegenDelay,   // Delay in seconds
 		false   // Don't loop
 	);
+}
+
+AFPS_HUD* AThirdPersonCharacter::GetHud(){
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC && PC->GetHUD()) {
+		AFPS_HUD* HUD = Cast<AFPS_HUD>(PC->GetHUD());
+		if (HUD) {
+			return HUD;
+		}
+	}
+	return nullptr;
 }

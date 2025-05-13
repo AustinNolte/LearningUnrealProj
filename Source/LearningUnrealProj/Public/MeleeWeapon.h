@@ -6,12 +6,14 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "EnemyTypes/MeleeEnemy.h"
 #include "GameFramework/Character.h"
+#include "HUDComponents/FPS_HUD.h"
 #include "BasicEnemy.h"
 #include "MeleeWeapon.generated.h"
 
 class ACharacter;
 class AThirdPersonCharacter;
 class UMeleePlayerAnimInstance;
+class AFPS_HUD;
 class AMeleeEnemy;
 
 UENUM(BLueprintType)

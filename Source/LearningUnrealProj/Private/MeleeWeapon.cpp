@@ -34,12 +34,10 @@ void AMeleeWeapon::Tick(float DeltaTime){
 }
 
 void AMeleeWeapon::EnableHurtBox() {
-	UE_LOG(LogTemp, Warning, TEXT("Here in EnableHurtBox"));
 	HurtBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void AMeleeWeapon::DisableHurtBox() {
-	UE_LOG(LogTemp, Warning, TEXT("Here in DisableHurtBox"));
 	HurtBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -63,8 +61,12 @@ void AMeleeWeapon::AttackCombo(FAttackData Data) {
 		CurrentAttackIndex++;
 	}
 	if (PlayerOwner) {
-		if (PlayerOwner->Stamina > 0 && CurrentAttackIndex < Data.StaminaPerAttack.Num()) {
+		if (PlayerOwner->Stamina > 0 && CurrentAttackIndex < Data.StaminaPerAttack.Num() && !bWantsToCombo) {
 			PlayerOwner->Stamina -= Data.StaminaPerAttack[CurrentAttackIndex];
+			AFPS_HUD* HUD = PlayerOwner->GetHud();
+			if (HUD) {
+				HUD->UpdateStamina(PlayerOwner->Stamina/PlayerOwner->MAX_STAMINA);
+			}
 			PlayerOwner->StartStaminaRegenDelay();
 		}
 		else {	
@@ -76,6 +78,11 @@ void AMeleeWeapon::AttackCombo(FAttackData Data) {
 		CurrentAttackData = Data;
 		AnimInstance->PlayMontage(Data.AttackMontages);
 		bAttacking = true;
+		if (PlayerOwner) {
+			if (PlayerOwner->IsStaminaRegen()) {
+				PlayerOwner->StopStaminaRegen();
+			}
+		}
 	}
 }
 
@@ -92,7 +99,6 @@ void AMeleeWeapon::DisableComboWindow() {
 }
 
 void AMeleeWeapon::ResetAttackState() {
-	//UE_LOG(LogTemp, Warning, TEXT("In ResetAttackState"));
 	bWantsToCombo = false;
 	bAttacking = false;
 	bEnemyHitDuringAttack = false;
@@ -114,10 +120,14 @@ void AMeleeWeapon::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 
 			if (!(bEnemyHitDuringAttack)) {
 				EnableEnemyHitDuringAttack();
-				UE_LOG(LogTemp, Warning, TEXT("CurrentAttackIndex: %d"), GetCurrentAttackIndex());
 				float Damage = CurrentAttackData.DamagePerAttack[GetCurrentAttackIndex()];
-				UE_LOG(LogTemp, Error, TEXT("Damage: %f"), Damage);
 				UGameplayStatics::ApplyDamage(EnemyHit, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
+
+				AFPS_HUD* HUD = PlayerOwner->GetHud();
+				if (HUD) {
+					HUD->ToggleHitMarker();
+				}
+
 			}
 		}
 	}
