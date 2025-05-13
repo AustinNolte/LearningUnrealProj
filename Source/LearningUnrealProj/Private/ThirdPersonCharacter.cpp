@@ -69,13 +69,13 @@ void AThirdPersonCharacter::Tick(float DeltaTime){
 		Health = Health + (HealthRegenRate * DeltaTime);
 		AFPS_HUD* HUD = GetHud();
 		if (HUD) {
-			HUD->UpdateHealth(Health);
+			HUD->UpdateHealth(Health/MAX_HEALTH);
 		}
 		
 		if (Health > MAX_HEALTH) {
 			Health = MAX_HEALTH;
 			if (HUD) {
-				HUD->UpdateHealth(Health);
+				HUD->UpdateHealth(Health/MAX_HEALTH);
 			}
 			bRegenHealth = false;
 		}
@@ -84,11 +84,11 @@ void AThirdPersonCharacter::Tick(float DeltaTime){
 		Stamina = Stamina + (StaminaRegenRate * DeltaTime);
 		AFPS_HUD* HUD = GetHud();
 		if (HUD) {
-			HUD->UpdateStamina(Stamina);
+			HUD->UpdateStamina(Stamina/MAX_STAMINA);
 		}
 		if (Stamina > MAX_STAMINA) {
 			Stamina = MAX_STAMINA;
-			HUD->UpdateStamina(Stamina);
+			HUD->UpdateStamina(Stamina/MAX_STAMINA);
 			bRegenStamina = false;
 		}
 	}

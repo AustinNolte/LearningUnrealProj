@@ -95,6 +95,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* PauseAction;
+
 	/* Weapon of character */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowAbstract = false, AllowedClasses = "AMeleeWeapon"))
 	UChildActorComponent* Weapon;
@@ -150,10 +153,17 @@ public:
 	void StartStaminaRegenDelay();
 	void StartHelathRegenDelay();
 
+	FORCEINLINE void StopStaminaRegen() { bRegenStamina = false; }
+	FORCEINLINE void StopHealthRegen() { bRegenHealth = false; }
+	
+	FORCEINLINE bool IsStaminaRegen() { return bRegenStamina; }
+	FORCEINLINE bool IsHealthRegen() { return bRegenHealth;  }
+
 	/* Helper functions */
 
 
 	/* Returns hud class */
+	UFUNCTION(BlueprintCallable)
 	AFPS_HUD* GetHud();
 private:
 	
