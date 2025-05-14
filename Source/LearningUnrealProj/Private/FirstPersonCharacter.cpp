@@ -1,5 +1,5 @@
-#include <WeaponPickup.h>
 #include "FirstPersonCharacter.h"
+#include <WeaponPickup.h>
 
 // Sets default values
 AFirstPersonCharacter::AFirstPersonCharacter(){

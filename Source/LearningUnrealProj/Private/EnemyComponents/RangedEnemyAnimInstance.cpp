@@ -1,5 +1,5 @@
-#include "EnemyTypes/LongRangeEnemy.h"
 #include "EnemyComponents/RangedEnemyAnimInstance.h"
+#include "EnemyTypes/LongRangeEnemy.h"
 
 void URangedEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
 
