@@ -24,6 +24,10 @@ APortal::APortal(){
 	DisplayText->SetVisibility(false);
 }
 
+void APortal::SetDisplayText(FText InputString){
+	DisplayText->SetText(InputString);
+}
+
 void APortal::BeginPlay() {
 	Super::BeginPlay();
 

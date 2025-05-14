@@ -40,6 +40,9 @@ public:
 	// Sets default values for this actor's properties
 	APortal();
 
+	UFUNCTION(BlueprintCallable)
+	void SetDisplayText(FText InputString);
+
 	virtual void Tick(float DeltaTime) override;
 
 protected:

@@ -140,19 +140,24 @@ void AThirdPersonCharacter::Move(const FInputActionValue& Value) {
 
 	if (Controller != nullptr)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		// should not move when attacking
+		AMeleeWeapon* CurrWeapon = Cast<AMeleeWeapon>(Weapon->GetChildActor());
+		if (!(CurrWeapon->bAttacking)) {
+			// find out which way is forward
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			// get forward vector
+			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			// get right vector 
+			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
+			// add movement 
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+			AddMovementInput(RightDirection, MovementVector.X);
+		}
+		
 	}
 }
 
@@ -247,4 +252,27 @@ AFPS_HUD* AThirdPersonCharacter::GetHud(){
 		}
 	}
 	return nullptr;
+}
+
+// Using Kismet GameplayStatistics functions for damage
+float AThirdPersonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) {
+
+	Health -= DamageAmount; 
+
+	if (bRegenHealth) {
+		bRegenHealth = false;
+	}
+
+	AFPS_HUD* HUD = GetHud();
+	if (HUD) {
+		HUD->UpdateHealth(Health / MAX_HEALTH);
+	}
+
+	StartHelathRegenDelay();
+
+	if (Health <= 0) {
+		Die();
+	}
+
+	return DamageAmount;
 }

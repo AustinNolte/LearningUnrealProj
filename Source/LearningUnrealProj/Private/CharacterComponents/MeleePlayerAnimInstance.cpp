@@ -1,5 +1,5 @@
-#include "ThirdPersonCharacter.h"
 #include "CharacterComponents/MeleePlayerAnimInstance.h"
+#include "ThirdPersonCharacter.h"
 
 void UMeleePlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds){
 

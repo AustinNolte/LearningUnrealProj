@@ -4,6 +4,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "CrosshairComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -15,6 +17,7 @@ enum class ECrossHairType : uint8 {
 
 class UImage;
 class UMaterialInstanceDynamic;
+class USoundBase;
 
 
 UCLASS()
@@ -87,6 +90,9 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Crosshair")
 	UMaterialInterface* HitMarkerMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hitmarker Sound")
+	USoundBase* HitMarkerSound;
 
 
 private:

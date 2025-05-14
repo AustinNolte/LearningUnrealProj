@@ -1,5 +1,5 @@
-#include "MeleeWeapon.h"
 #include "EnemyTypes/MeleeEnemy.h"
+#include "MeleeWeapon.h"
 
 
 AMeleeEnemy::AMeleeEnemy() {

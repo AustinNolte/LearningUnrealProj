@@ -131,4 +131,13 @@ void AMeleeWeapon::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 			}
 		}
 	}
+	else if (EnemyOwner) {
+		if (AThirdPersonCharacter* PlayerHit = Cast<AThirdPersonCharacter>(OtherActor)) {
+			if (!(bEnemyHitDuringAttack)) {
+				EnableEnemyHitDuringAttack();
+				float Damage = CurrentAttackData.DamagePerAttack[GetCurrentAttackIndex()];
+				UGameplayStatics::ApplyDamage(PlayerHit, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
+			}
+		}
+	}
 }

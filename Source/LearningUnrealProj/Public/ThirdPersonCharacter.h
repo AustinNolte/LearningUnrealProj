@@ -159,12 +159,22 @@ public:
 	FORCEINLINE bool IsStaminaRegen() { return bRegenStamina; }
 	FORCEINLINE bool IsHealthRegen() { return bRegenHealth;  }
 
+	UFUNCTION()
+	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Die();	
+	
+
+
 	/* Helper functions */
 
 
 	/* Returns hud class */
 	UFUNCTION(BlueprintCallable)
 	AFPS_HUD* GetHud();
+
+
 private:
 	
 	bool bRegenStamina = false;

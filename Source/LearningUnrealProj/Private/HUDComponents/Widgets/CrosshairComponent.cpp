@@ -100,6 +100,11 @@ void UCrosshairComponent::ToggleHitMarker(){
             0.1f,
             false
         );
+        if (CrosshairImage->GetVisibility() == ESlateVisibility::Visible) {
+            if (HitMarkerSound) {
+                UGameplayStatics::PlaySound2D(this, HitMarkerSound, .15, .8);
+            }
+        }
     }
 }
 
