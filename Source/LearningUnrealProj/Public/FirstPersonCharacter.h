@@ -222,6 +222,12 @@ public:
 	void StartStaminaRegenDelay();
 	void StartHelathRegenDelay();
 
+	UFUNCTION()
+	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Die();
+
 
 	/* Helper functions */
 	UFUNCTION(BlueprintCallable)

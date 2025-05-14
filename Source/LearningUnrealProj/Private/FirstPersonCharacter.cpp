@@ -399,3 +399,26 @@ AFPS_HUD* AFirstPersonCharacter::GetHud(){
 	}
 	return nullptr;
 }
+
+// Using Kismet GameplayStatistics functions for damage
+float AFirstPersonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) {
+
+	Health -= DamageAmount;
+
+	if (bRegenHealth) {
+		bRegenHealth = false;
+	}
+
+	AFPS_HUD* HUD = GetHud();
+	if (HUD) {
+		HUD->UpdateHealth(Health / MAX_HEALTH);
+	}
+
+	StartHelathRegenDelay();
+
+	if (Health <= 0) {
+		Die();
+	}
+
+	return DamageAmount;
+}
